@@ -1,0 +1,273 @@
+{
+  "_readme": "Training examples for SetFit classifiers. Edit these and run: python run_pipeline.py --retrain",
+  "_format": "{ dimension_name: { value_label: [ example1, example2, ... ] } }",
+  "_recommended_per_class": 8,
+
+  "comfort": {
+    "too firm": [
+      "this pillow is rock hard, hurts my neck after one night",
+      "way too firm, feels like sleeping on a brick",
+      "not what I expected, far too stiff and uncomfortable",
+      "my neck is killing me, the pillow has zero give to it",
+      "hard as a board, not comfortable at all",
+      "extremely firm, not suitable for side sleepers",
+      "too rigid, doesn't conform to your head shape at all",
+      "the filling is packed so tight it's basically a rock"
+    ],
+    "just right": [
+      "perfect amount of softness, sleep so much better now",
+      "exactly the right firmness for me, love it",
+      "comfortable from night one, great support without being hard",
+      "the balance of soft and firm is just perfect",
+      "feels amazing, my best sleep in years",
+      "ideal comfort level, not too soft not too hard",
+      "woke up with no neck pain for the first time in months",
+      "the comfort is spot on, highly recommend"
+    ],
+    "too soft": [
+      "way too soft, my head just sinks straight through",
+      "no support at all, feels like sleeping on a cloud of nothing",
+      "too mushy, I wake up with neck pain every morning",
+      "completely lacking firmness, totally useless for support",
+      "like sleeping on a marshmallow, which sounds nice but isn't",
+      "zero resistance, my head touches the mattress through it",
+      "too soft for anyone who needs neck support",
+      "not enough firmness, hurts my neck after a week"
+    ],
+    "changes over time": [
+      "was great for the first month then started to change",
+      "used to be perfect but it's getting harder over time",
+      "the firmness has completely changed since I bought it",
+      "started soft but now feels like a completely different pillow",
+      "it was comfortable at first but not anymore",
+      "lost its original feel after about 3 months of use",
+      "the comfort level shifted noticeably after washing",
+      "doesn't feel the same as when I first got it"
+    ]
+  },
+
+  "shape": {
+    "too thin": [
+      "so flat, basically useless as a pillow",
+      "way too thin, not enough height for my head",
+      "flatter than I expected from the pictures",
+      "barely any loft to this pillow, very disappointing",
+      "too low profile, doesn't lift my head enough",
+      "thinner than a folded towel honestly",
+      "not thick enough for side sleeping at all",
+      "looked thicker online, very flat in real life"
+    ],
+    "just right thickness": [
+      "perfect height for my sleeping position",
+      "the thickness is exactly what I needed",
+      "great loft, keeps my head perfectly aligned",
+      "just the right amount of height, love it",
+      "ideal thickness for back sleeping",
+      "the pillow height is perfect for me",
+      "not too high not too low, sits just right",
+      "perfect shape and size, exactly as described"
+    ],
+    "too thick": [
+      "way too thick, strains my neck tilting it up",
+      "too high profile for stomach sleepers like me",
+      "so tall my neck is at an uncomfortable angle",
+      "too puffy, pushes my head forward too much",
+      "great for side sleepers but too thick for me",
+      "the loft is too high for back sleeping",
+      "way too tall, I can't sleep comfortably on it",
+      "too much height, causes neck stiffness"
+    ],
+    "loses shape": [
+      "went completely flat after two weeks",
+      "totally lost its shape, just a blob now",
+      "flattens out within an hour of sleeping on it",
+      "saggy and flat after just a month of use",
+      "doesn't hold its shape at all, very disappointed",
+      "looked great out of the bag but went flat fast",
+      "the filling keeps bunching up and losing shape",
+      "shape retention is terrible, gone within weeks"
+    ]
+  },
+
+  "durability": {
+    "lasts well": [
+      "had it for two years and still feels like new",
+      "incredibly durable, holds up through regular washing",
+      "no signs of wear after a year of daily use",
+      "still going strong after 18 months, great quality",
+      "washes well and keeps its quality, very impressed",
+      "lasted much longer than I expected for the price",
+      "great long-term durability, no issues at all",
+      "solid construction, shows no signs of breaking down"
+    ],
+    "degrades quickly": [
+      "fell apart after just three months, terrible quality",
+      "the stitching came undone after the first wash",
+      "filling started leaking out within weeks",
+      "completely worn out in under six months",
+      "lost all its quality very quickly, not worth it",
+      "basically unusable after two months of normal use",
+      "the cover started pilling and degrading fast",
+      "really poor longevity for the price paid"
+    ],
+    "too early to tell": [
+      "just received it today, will update after a few weeks",
+      "only had it for two days so far",
+      "too soon to say anything about durability",
+      "first night with it, seems good but need more time",
+      "brand new so can't comment on how it holds up yet",
+      "only used it once, will review again in a month",
+      "early days but initial impressions are positive",
+      "not enough time to judge yet, ask me in a month"
+    ]
+  },
+
+  "price_value": {
+    "too expensive": [
+      "way too expensive for what you actually get",
+      "overpriced compared to similar pillows out there",
+      "not worth the money at all, very disappointed",
+      "the price point is too high for this quality",
+      "I've had better pillows for a fraction of the cost",
+      "premium price but definitely not premium quality",
+      "can't justify spending this much on a pillow honestly",
+      "too pricey, felt ripped off after receiving it"
+    ],
+    "good value": [
+      "decent quality for the price, no complaints",
+      "good value for money, does what it says",
+      "reasonable price point for what you get",
+      "not the cheapest but fair for the quality",
+      "solid product at a sensible price",
+      "pretty good deal, happy with the purchase",
+      "the price is justified given the quality",
+      "affordable and does the job well"
+    ],
+    "worth it": [
+      "absolutely worth every penny, best pillow I've owned",
+      "great investment, slept better from night one",
+      "totally worth the price, quality is exceptional",
+      "spending a bit more on this was definitely the right call",
+      "worth every cent, my neck finally doesn't hurt",
+      "best money I've spent on bedding, highly recommend",
+      "the price seemed high but the quality justifies it",
+      "100 percent worth it, don't hesitate to buy"
+    ]
+  },
+
+  "intent": {
+    "needs reply": [
+      "does this come in a king size version?",
+      "can I wash this in a hot cycle or cold only?",
+      "is this suitable for people with neck problems?",
+      "how long does shipping take to Southeast Asia?",
+      "do you offer a discount for buying two pillows?",
+      "is this pillow good for side sleepers?",
+      "what's the return policy if it doesn't work for me?",
+      "does this come with a pillowcase included?"
+    ],
+    "positive review": [
+      "absolutely love this pillow, best purchase I've made",
+      "highly recommend to anyone with neck pain",
+      "five stars, exceeded all my expectations",
+      "amazing quality, my whole family bought one",
+      "great product, will definitely buy again",
+      "this pillow changed the way I sleep, so good",
+      "can't imagine going back to my old pillow now",
+      "perfect in every way, very happy customer"
+    ],
+    "negative review": [
+      "do not buy this, complete waste of money",
+      "terrible quality, fell apart within a month",
+      "worst pillow I've ever owned, deeply regret buying",
+      "absolute rubbish, avoid at all costs",
+      "very disappointed, nothing like the description",
+      "gave me neck pain every single night",
+      "returned it after three days, unusable",
+      "wish I had read the reviews before buying this"
+    ],
+    "comparison": [
+      "much better than the one I had from IKEA",
+      "similar to the Tempur version but at half the price",
+      "not as good as my old memory foam one honestly",
+      "I compared five pillows and this one won",
+      "better quality than the more expensive brands I tried",
+      "my previous pillow lasted longer than this one did",
+      "feels completely different to my last pillow",
+      "tried three brands before settling on this one"
+    ],
+    "monitor": [
+      "interesting to see how this compares to other brands",
+      "a lot of people seem to have mixed feelings about this",
+      "the reviews are pretty divided on this product",
+      "I've been considering this for a while",
+      "curious to see what others think about it long term",
+      "might try this after seeing the comments here",
+      "the debate about firmness levels is interesting",
+      "lots of people mentioning the same issues"
+    ],
+    "spam": [
+      "check out my page for amazing deals on everything",
+      "visit our website for the best prices guaranteed",
+      "follow me for more great product reviews and tips",
+      "I sell similar products click my profile link",
+      "great post! also check out our new collection",
+      "DM me for discount codes on all household items",
+      "totally unrelated but have you tried our mattresses",
+      "nice pillow, also our shop has a sale this weekend"
+    ]
+  },
+
+  "tone": {
+    "happy": [
+      "absolutely obsessed with this pillow, so happy with it!",
+      "love love love, best thing I've bought all year",
+      "so happy with this purchase, sleeping like a baby",
+      "amazing! can't believe how good this is",
+      "thrilled with this, exceeded all expectations",
+      "this made me so happy, exactly what I needed",
+      "beyond satisfied, just wonderful honestly",
+      "delighted with the quality, five stars all the way"
+    ],
+    "curious": [
+      "wondering if this would work for stomach sleepers?",
+      "not sure if I should get the standard or firm version",
+      "has anyone tried washing this at high temperature?",
+      "curious how this holds up after a year or two",
+      "thinking about getting this, any advice?",
+      "is this really as good as the reviews say?",
+      "does anyone know if this ships to Thailand?",
+      "I'm on the fence, can't decide if it's worth the price"
+    ],
+    "disappointed": [
+      "expected much more from this based on the price",
+      "a bit let down honestly, thought it would be better",
+      "not quite what I was hoping for",
+      "underwhelming for the price I paid",
+      "sadly not as good as I expected it to be",
+      "the photos made it look much better than it actually is",
+      "it's okay but I won't be buying again",
+      "disappointed with the quality after all the good reviews"
+    ],
+    "angry": [
+      "absolutely furious, this is the worst product ever",
+      "so angry, this is complete false advertising",
+      "unacceptable quality for this price, I'm outraged",
+      "extremely frustrated, totally useless product",
+      "I'm disgusted by the quality, never buying again",
+      "this is a scam, don't waste your money",
+      "furious that I wasted money on this garbage",
+      "outraged by the terrible customer service and quality"
+    ],
+    "neutral": [
+      "arrived in three days, packaging was intact",
+      "standard pillow, does what it's supposed to do",
+      "it's a pillow, works fine for its purpose",
+      "received as described, no issues with delivery",
+      "used it for two weeks, nothing special to report",
+      "it does the job, nothing more nothing less",
+      "the dimensions match the listing exactly",
+      "average product, neither good nor bad"
+    ]
+  }
+}

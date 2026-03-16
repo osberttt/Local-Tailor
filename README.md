@@ -30,10 +30,12 @@ The dashboard opens at **http://localhost:8501** when done.
 
 | What you want to do | Command |
 |----------------------|---------|
-| First time setup (generate data + train + predict + UI) | `python run_pipeline.py first-time` |
+| New user (download models + open empty UI to configure) | `python run_pipeline.py user` |
+| Developer setup (demo config + synthetic data + train + predict + eval + UI) | `python run_pipeline.py setup` |
 | Retrain after editing dimensions/examples | `python run_pipeline.py retrain` |
 | Predict on new/updated comments | `python run_pipeline.py predict` |
 | Just open the dashboard | `python run_pipeline.py load-data` |
+| Clean up all generated files and models | `python clean.py` |
 
 ## Dashboard Views
 
@@ -108,14 +110,18 @@ Or use the **Config** view in the dashboard to do all three steps visually.
 ```
 local-tailor/
 ├── run_pipeline.py                ← entry point (pipeline + UI launcher)
+├── clean.py                       ← delete all generated files and models
 ├── requirements.txt               ← pip dependencies
-├── config/
-│   └── dimensions.yaml            ← dimension names, values, descriptions
+├── demo/                          ← dev/demo pillow shop config (read-only reference)
+│   ├── dimensions.yaml            ← demo dimensions (copied to config/ by 'demo' mode)
+│   └── examples.json              ← demo examples (copied to data/ by 'demo' mode)
+├── config/                        ← user's active config (created by setup/demo)
+│   └── dimensions.yaml
 ├── data/
-│   ├── examples.json              ← training examples (edit to retrain)
-│   ├── comments_clean_demo.json   ← cleaned comments dataset
+│   ├── examples.json              ← user's training examples
+│   ├── comments_clean_demo.json   ← comments dataset (synthetic or fetched)
 │   ├── predictions_demo.json      ← model predictions per comment
-│   ├── ground_truth_demo.json     ← synthetic ground truth labels
+│   ├── ground_truth_demo.json     ← ground truth labels (synthetic only)
 │   └── evaluation_demo.json       ← accuracy metrics
 ├── models/                        ← trained SetFit models (one folder per dimension)
 ├── reports/                       ← exported HTML/PDF reports
@@ -128,7 +134,7 @@ local-tailor/
     ├── span_extractor.py          ← RoBERTa span extraction
     ├── setfit_trainer.py          ← SetFit train + predict per dimension
     ├── pipeline.py                ← orchestrates span + classify
-    ├── evaluator.py               ← accuracy vs ground truth + sensitivity
+    ├── evaluator.py               ← accuracy vs ground truth
     ├── reporter.py                ← Jinja2 HTML + fpdf2 PDF generation
     └── app.py                     ← Streamlit dashboard (5 views)
 ```
@@ -137,3 +143,4 @@ local-tailor/
 
 - [User Guide](docs/user_guide.md) — step-by-step instructions for non-technical users
 - [Technical Reference](docs/technical.md) — architecture, pipeline internals, deployment
+- [Facebook Integration](docs/facebook_integration.md) — connecting to Facebook Graph API

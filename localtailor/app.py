@@ -142,7 +142,15 @@ def render_sidebar(comments, predictions, evaluation):
 
         view = st.radio(
             "View",
-            ["📋 Dimension Board", "📬 Intent Queue", "📊 Analytics", "📤 Export", "⚙️ Config"],
+            [
+                "📋 Dimension Board",
+                "📬 Intent Queue",
+                "📊 Analytics",
+                "📤 Export",
+                "⚙️ Config",
+                # TODO: "🔑 Login" — Facebook login / access token UI
+                # TODO: "📡 Facebook" — connect to post, fetch comments
+            ],
             label_visibility="collapsed",
         )
 
@@ -765,10 +773,28 @@ def render_config_editor():
         st.caption("Run `python run_pipeline.py retrain` to retrain with the updated config.")
 
 
+# TODO: render_login() — Facebook access token input, store in st.session_state
+#   - Text input for access token (or paste from Graph API Explorer)
+#   - "Validate" button → call FB API /me to confirm token works
+#   - Show token status (valid/expired) and connected page name
+#   - Save token to local config (never committed to git)
+
+# TODO: render_facebook() — Facebook post selector + comment fetcher
+#   - Input: Facebook post URL or post ID
+#   - "Fetch Comments" button → call Graph API /{post_id}/comments
+#   - Show preview of fetched comments (count, sample)
+#   - Save to data/comments_clean_{post_id}.json in expected schema
+#   - Handle pagination (FB returns 25 per page by default)
+#   - Handle rate limits and token expiration gracefully
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     comments, predictions, evaluation = load_data()
+
+    # First-time user: no config exists yet → go straight to Config
+    has_config = DIMENSIONS_YAML.exists() and DIMENSIONS_YAML.stat().st_size > 10
 
     view = render_sidebar(comments, predictions, evaluation)
 
@@ -776,13 +802,23 @@ def main():
         render_config_editor()
         return
 
+    # TODO: if "Login" in view: render_login(); return
+    # TODO: if "Facebook" in view: render_facebook(); return
+
+    if not has_config:
+        st.info("Welcome to Local Tailor! Start by setting up your dimensions.")
+        st.markdown("Go to **Config** in the sidebar to define your dimensions and add training examples.")
+        st.markdown("Once configured, run `python run_pipeline.py retrain` to train and predict.")
+        return
+
     if comments is None:
-        st.error("Data not found. Run `python run_pipeline.py first-time` first.")
-        st.code("python run_pipeline.py first-time")
+        st.warning("No comments found. Fetch comments from Facebook or run the pipeline.")
+        st.code("python run_pipeline.py predict")
         return
 
     if not predictions:
-        st.warning("Predictions not found. Run the pipeline to generate them.")
+        st.warning("No predictions yet. Run the pipeline to classify your comments.")
+        st.code("python run_pipeline.py predict")
         return
 
     if "Dimension Board" in view:

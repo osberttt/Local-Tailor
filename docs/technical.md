@@ -200,8 +200,14 @@ streamlit run localtailor/app.py --server.headless true
 1. Clone the repo
 2. `python -m venv venv && source venv/bin/activate`
 3. `pip install -r requirements.txt`
-4. `python run_pipeline.py first-time` (first run: downloads models, trains, launches UI)
-5. Subsequent runs: `python run_pipeline.py load-data`
+4. `python run_pipeline.py user` (downloads models, opens UI for configuration)
+5. Define dimensions and examples in the Config view, then: `python run_pipeline.py retrain`
+6. Subsequent runs: `python run_pipeline.py load-data`
+7. For developers: `python run_pipeline.py setup` (demo config + synthetic data + full pipeline)
+
+### Cleanup
+
+`python clean.py` removes all generated files (models, predictions, evaluations, reports, synthetic data) without touching config, examples, or the virtual environment.
 
 ### Server deployment
 
