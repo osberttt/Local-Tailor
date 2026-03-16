@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Tailor Report — {{ metadata.post_id }}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #222;
+    background: #fff;
+    padding: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .report-header {
+    border-bottom: 3px solid #1F3864;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  .report-header h1 {
+    font-size: 28px;
+    color: #1F3864;
+    letter-spacing: 2px;
+  }
+  .report-header .tagline {
+    color: #2E75B6;
+    font-style: italic;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .report-meta {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    gap: 24px;
+  }
+  .report-meta span strong { color: #333; }
+
+  /* ── Section headers ── */
+  h2 {
+    font-size: 16px;
+    color: #1F3864;
+    border-left: 4px solid #2E75B6;
+    padding-left: 10px;
+    margin: 32px 0 14px 0;
+  }
+  h3 {
+    font-size: 13px;
+    font-weight: bold;
+    color: #2E75B6;
+    margin: 18px 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Summary cards ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: #1F3864;
+    color: white;
+    border-radius: 6px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .summary-card .number { font-size: 28px; font-weight: bold; }
+  .summary-card .label  { font-size: 11px; margin-top: 4px; opacity: 0.85; }
+
+  /* ── Coverage bars ── */
+  .coverage-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .coverage-table td { padding: 5px 8px; vertical-align: middle; }
+  .coverage-table .dim-name { width: 140px; font-weight: bold; color: #1F3864; }
+  .coverage-table .bar-cell { width: 400px; }
+  .coverage-bar-bg {
+    background: #e8e8e8;
+    border-radius: 3px;
+    height: 14px;
+    width: 100%;
+  }
+  .coverage-bar-fill {
+    background: #2E75B6;
+    border-radius: 3px;
+    height: 14px;
+  }
+  .coverage-table .pct { width: 60px; color: #444; font-size: 12px; }
+  .coverage-table .count { color: #888; font-size: 11px; }
+
+  /* ── Dimension breakdown tables ── */
+  .dim-section { margin-bottom: 28px; }
+  .dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .dim-table th {
+    background: #2E75B6;
+    color: white;
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: bold;
+  }
+  .dim-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+  .dim-table tr:nth-child(even) td { background: #f8f9fa; }
+  .dim-table tr:last-child td { border-bottom: none; }
+  .dim-table .value-label { font-weight: bold; color: #1F3864; }
+
+  /* Sentiment badges */
+  .sent-pos { color: #1a7a3e; font-weight: bold; }
+  .sent-neg { color: #c0392b; font-weight: bold; }
+  .sent-neu { color: #666; }
+
+  /* ── Intent queue ── */
+  .intent-card {
+    border-left: 4px solid #2E75B6;
+    background: #f8f9fa;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+  }
+  .intent-card.needs-reply  { border-left-color: #FF6B35; }
+  .intent-card.negative     { border-left-color: #c0392b; }
+  .intent-card.comparison   { border-left-color: #9B59B6; }
+  .intent-card .comment-text { font-size: 13px; margin-bottom: 5px; line-height: 1.4; }
+  .intent-card .meta { color: #888; font-size: 11px; }
+  .intent-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    background: #2E75B6;
+    color: white;
+    margin-right: 6px;
+  }
+  .intent-badge.needs-reply  { background: #FF6B35; }
+  .intent-badge.negative     { background: #c0392b; }
+  .intent-badge.comparison   { background: #9B59B6; }
+
+  /* ── Accuracy table ── */
+  .accuracy-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .accuracy-table th {
+    background: #1F3864;
+    color: white;
+    padding: 7px 10px;
+    text-align: left;
+  }
+  .accuracy-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+  .accuracy-table tr:nth-child(even) td { background: #f8f9fa; }
+  .acc-good { color: #1a7a3e; font-weight: bold; }
+  .acc-mid  { color: #e67e22; font-weight: bold; }
+  .acc-low  { color: #c0392b; font-weight: bold; }
+
+  /* ── Top comments ── */
+  .top-comment {
+    background: #f0f4f8;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-style: italic;
+    color: #333;
+    line-height: 1.4;
+  }
+  .top-comment .score { font-style: normal; font-size: 11px; color: #888; margin-top: 4px; }
+
+  /* ── Footer ── */
+  .report-footer {
+    margin-top: 48px;
+    border-top: 2px solid #1F3864;
+    padding-top: 16px;
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+  }
+  .report-footer strong { color: #1F3864; }
+
+  /* ── Print / PDF ── */
+  @media print {
+    body { padding: 20px; }
+    .dim-section { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<div class="report-header">
+  <h1>🧵 LOCAL TAILOR</h1>
+  <div class="tagline">Comment intelligence fitted to your business.</div>
+  <div class="report-meta">
+    <span><strong>Session:</strong> {{ metadata.post_id }}</span>
+    <span><strong>Comments analysed:</strong> {{ metadata.total_comments }}</span>
+    <span><strong>Dimensions:</strong> {{ metadata.dimensions | length }}</span>
+    <span><strong>Generated:</strong> {{ metadata.generated_at }}</span>
+  </div>
+</div>
+
+<!-- ── Executive Summary ──────────────────────────────────────────────── -->
+<h2>Executive Summary</h2>
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number">{{ metadata.total_comments }}</div>
+    <div class="label">Comments Analysed</div>
+  </div>
+  <div class="summary-card">
+    <div class="number">{{ summary.needs_reply }}</div>
+    <div class="label">Need a Reply</div>
+  </div>
+  <div class="summary-card">
+    <div class="number">{{ summary.negative_reviews }}</div>
+    <div class="label">Negative Reviews</div>
+  </div>
+  <div class="summary-card">
+    <div class="number">{{ summary.unclear_total }}</div>
+    <div class="label">Unclear / Low Confidence</div>
+  </div>
+</div>
+
+<!-- ── Dimension Coverage ─────────────────────────────────────────────── -->
+<h2>Dimension Coverage</h2>
+<p style="color:#555; margin-bottom:14px; font-size:12px;">
+  What percentage of comments mention each dimension (not N/A).
+  High coverage = customers are actively discussing this aspect of your product.
+</p>
+<table class="coverage-table">
+{% for dim in coverage %}
+<tr>
+  <td class="dim-name">{{ dim.name | replace("_", " ") | title }}</td>
+  <td class="bar-cell">
+    <div class="coverage-bar-bg">
+      <div class="coverage-bar-fill" style="width: {{ dim.pct }}%;"></div>
+    </div>
+  </td>
+  <td class="pct"><strong>{{ dim.pct }}%</strong></td>
+  <td class="count">{{ dim.count }} / {{ metadata.total_comments }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<!-- ── Per-Dimension Breakdown ────────────────────────────────────────── -->
+<h2>Per-Dimension Breakdown</h2>
+
+{% for dim in dimensions %}
+{% if dim.name not in ['intent', 'tone'] %}
+<div class="dim-section">
+  <h3>{{ dim.name | replace("_", " ") | title }}</h3>
+  <table class="dim-table">
+    <thead>
+      <tr>
+        <th>Value</th>
+        <th>Count</th>
+        <th>% of classified</th>
+        <th style="color:#aef">🔵 Positive</th>
+        <th style="color:#faa">🔴 Negative</th>
+        <th>⚪ Neutral</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for row in dim.rows %}
+    <tr>
+      <td class="value-label">{{ row.value }}</td>
+      <td>{{ row.count }}</td>
+      <td>{{ row.pct }}%</td>
+      <td class="sent-pos">{{ row.positive }}</td>
+      <td class="sent-neg">{{ row.negative }}</td>
+      <td class="sent-neu">{{ row.neutral }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if dim.top_comments %}
+  <h3 style="margin-top:14px;">Most Representative Comments</h3>
+  {% for c in dim.top_comments %}
+  <div class="top-comment">
+    "{{ c.message }}"
+    <div class="score">
+      value: <strong>{{ c.value }}</strong> &nbsp;·&nbsp;
+      span: <em>{{ c.span or '—' }}</em> &nbsp;·&nbsp;
+      confidence: {{ "%.2f"|format(c.score) }}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- ── Intent Queue ───────────────────────────────────────────────────── -->
+<h2>Intent Queue</h2>
+<p style="color:#555; margin-bottom:14px; font-size:12px;">
+  Comments sorted by action priority. Unanswered questions appear first.
+</p>
+
+{% for item in intent_queue %}
+<div class="intent-card {{ item.css_class }}">
+  <div class="comment-text">{{ item.message }}</div>
+  <div class="meta">
+    <span class="intent-badge {{ item.css_class }}">{{ item.intent }}</span>
+    tone: {{ item.tone or '—' }}
+    {% if item.like_count > 0 %}&nbsp;·&nbsp; 👍 {{ item.like_count }}{% endif %}
+  </div>
+</div>
+{% endfor %}
+
+{% if intent_queue | length == 0 %}
+<p style="color:#888; font-style:italic;">No intent classifications available.</p>
+{% endif %}
+
+<!-- ── Accuracy Metrics ───────────────────────────────────────────────── -->
+{% if accuracy %}
+<h2>Accuracy vs Ground Truth</h2>
+<p style="color:#555; margin-bottom:14px; font-size:12px;">
+  Measured against the synthetic dataset ground truth labels.
+  Overall accuracy: <strong>{{ accuracy.overall_accuracy_pct }}</strong>
+</p>
+<table class="accuracy-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Accuracy</th>
+      <th>Correct / Total</th>
+      <th>Unclear</th>
+      <th>N/A Precision</th>
+      <th>N/A Recall</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for dim, stats in accuracy.per_dimension.items() %}
+  <tr>
+    <td><strong>{{ dim | replace("_", " ") | title }}</strong></td>
+    <td>
+      {% set acc = stats.accuracy %}
+      {% if acc >= 0.85 %}<span class="acc-good">{{ stats.accuracy_pct }}</span>
+      {% elif acc >= 0.70 %}<span class="acc-mid">{{ stats.accuracy_pct }}</span>
+      {% else %}<span class="acc-low">{{ stats.accuracy_pct }}</span>{% endif %}
+    </td>
+    <td>{{ stats.correct }} / {{ stats.classified_total }}</td>
+    <td>{{ stats.unclear_count }}</td>
+    <td>{{ "%.0f"|format(stats.na_precision * 100) }}%</td>
+    <td>{{ "%.0f"|format(stats.na_recall * 100) }}%</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<!-- ── Methodology ────────────────────────────────────────────────────── -->
+<h2>Methodology Note</h2>
+<p style="font-size:12px; color:#444; line-height:1.7;">
+  Local Tailor uses a three-stage NLP pipeline running entirely on your local machine.
+  <strong>Span extraction</strong> (deepset/roberta-base-squad2) identifies which part of each
+  comment is relevant to each dimension. <strong>SetFit classification</strong> (few-shot
+  fine-tuned all-MiniLM-L6-v2) assigns a dimension value from your defined categories using
+  as few as 8 labeled examples per class. <strong>Sentiment analysis</strong>
+  (cardiffnlp/twitter-roberta-base-sentiment) scores the extracted span, not the full comment,
+  producing per-dimension sentiment rather than a single averaged score.
+  No comment data is transmitted to any external server.
+</p>
+
+<!-- ── Footer ────────────────────────────────────────────────────────── -->
+<div class="report-footer">
+  <span><strong>LOCAL TAILOR</strong> — Free. Local. Fitted to your business.</span>
+  <span>AIIC 2026 · Rangsit University International College · {{ metadata.generated_at[:10] }}</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+# Local Tailor — Dimension Configuration
+# ========================================
+# Defines WHAT dimensions exist and WHAT each value means.
+# Training examples live separately in data/examples.json
+#
+# To add a dimension: add a block here, then add examples to data/examples.json
+# To retrain: edit data/examples.json then run: python run_pipeline.py --retrain
+
+dimensions:
+
+  # ── Comfort ────────────────────────────────────────────────────────────────
+  - name: comfort
+    enabled: true
+    values:
+      - label: "too firm"
+        description: "The pillow is too hard, stiff, or rigid"
+      - label: "just right"
+        description: "Comfort level is perfect, ideal softness and support"
+      - label: "too soft"
+        description: "The pillow is too soft, flat, or collapses under weight"
+      - label: "changes over time"
+        description: "Comfort changed after extended use"
+
+  # ── Shape & Thickness ──────────────────────────────────────────────────────
+  - name: shape
+    enabled: true
+    values:
+      - label: "too thin"
+        description: "The pillow is too flat or not thick enough"
+      - label: "just right thickness"
+        description: "The pillow height and thickness is perfect"
+      - label: "too thick"
+        description: "The pillow is too tall or puffy"
+      - label: "loses shape"
+        description: "The pillow flattens, goes saggy, or loses its form over time"
+
+  # ── Durability ─────────────────────────────────────────────────────────────
+  - name: durability
+    enabled: true
+    values:
+      - label: "lasts well"
+        description: "The pillow holds up well over time, durable quality"
+      - label: "degrades quickly"
+        description: "Pillow wore out or deteriorated faster than expected"
+      - label: "too early to tell"
+        description: "Product is new, not enough time to judge longevity"
+
+  # ── Price & Value ──────────────────────────────────────────────────────────
+  - name: price_value
+    enabled: true
+    values:
+      - label: "too expensive"
+        description: "Pillow is overpriced or not worth the cost"
+      - label: "good value"
+        description: "Reasonable price for the quality received"
+      - label: "worth it"
+        description: "Excellent value, great quality for the price paid"
+
+  # ── Intent ─────────────────────────────────────────────────────────────────
+  - name: intent
+    enabled: true
+    values:
+      - label: "needs reply"
+        description: "Comment contains a direct question awaiting an answer"
+      - label: "positive review"
+        description: "Compliment, recommendation, or positive experience shared"
+      - label: "negative review"
+        description: "Complaint, warning to others, or negative experience shared"
+      - label: "comparison"
+        description: "Comment compares this product to another brand or product"
+      - label: "monitor"
+        description: "Discussion or general conversation worth watching"
+      - label: "spam"
+        description: "Off-topic, promotional, or unrelated comment"
+
+  # ── Tone ───────────────────────────────────────────────────────────────────
+  - name: tone
+    enabled: true
+    values:
+      - label: "happy"
+        description: "Enthusiastic, delighted, or clearly satisfied"
+      - label: "curious"
+        description: "Asking questions, wondering, or expressing uncertainty"
+      - label: "disappointed"
+        description: "Let down, expected better, or quietly dissatisfied"
+      - label: "angry"
+        description: "Frustrated, upset, or strongly negative in tone"
+      - label: "neutral"
+        description: "Factual, informational, or no strong emotional tone"
