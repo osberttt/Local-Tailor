@@ -82,6 +82,7 @@ class SetFitDimensionClassifier:
         )
 
         args = TrainingArguments(
+            output_dir=str(self.model_path),  # prevent stray "checkpoints" dir
             batch_size=16,
             num_epochs=3,           # more epochs help with few examples per class
             num_iterations=20,      # contrastive pairs per example

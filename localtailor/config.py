@@ -28,10 +28,13 @@ class Shop(str, Enum):
     PILLOW = "pillow"
     SHOE   = "shoe"
 
+    def __format__(self, format_spec):
+        return str.__format__(self.value, format_spec)
+
 # ── Active shop ──────────────────────────────────────────────────────────────
 # Change this to switch shops. All paths resolve from this.
 
-SHOP = Shop.PILLOW
+SHOP = Shop.SHOE
 
 # ── Shop path resolver ───────────────────────────────────────────────────────
 

@@ -100,6 +100,13 @@ st.markdown("""
     padding-bottom: 4px;
     margin-bottom: 8px;
 }
+/* Hand cursor on dropdowns (selectbox / multiselect) */
+div[data-baseweb="select"] {
+    cursor: pointer;
+}
+div[data-baseweb="select"] * {
+    cursor: pointer;
+}
 </style>
 """, unsafe_allow_html=True)
 
