@@ -5,21 +5,31 @@
 Local Tailor is a 2-stage NLP pipeline that classifies customer comments along configurable dimensions, then displays results in a Streamlit dashboard.
 
 ```
-                    ┌──────────────┐
-                    │  dimensions  │
-                    │    .yaml     │
-                    └──────┬───────┘
-                           │
+  shops/{SHOP}/
+  ├── dimensions.yaml
+  ├── examples.json
+  └── synthetic.py
+         │
+         ▼
   comments ──► SpanExtractor ──► SetFitClassifier ──► predictions.json
                (RoBERTa QA)      (per-dimension)          │
-                                                                                ▼
-                                                                        Streamlit Dashboard
-                                                                        ├── Dimension Board
-                                                                        ├── Intent Queue
-                                                                        ├── Analytics
-                                                                        ├── Export
-                                                                        └── Config Editor
+                                                           ▼
+                                                   Streamlit Dashboard
+                                                   ├── Dimension Board
+                                                   ├── Intent Queue
+                                                   ├── Analytics
+                                                   ├── Export
+                                                   └── Config Editor
 ```
+
+### Multi-Shop Architecture
+
+Each shop is a self-contained folder under `shops/`:
+- `dimensions.yaml` — dimension definitions (names, values, descriptions)
+- `examples.json` — training examples (8 per class recommended)
+- `synthetic.py` — synthetic comments with ground truth labels
+
+Switch shops by setting `SHOP` in `localtailor/config.py`. All data, models, and outputs are scoped per shop automatically via `shop_paths()`.
 
 ## Pipeline Stages
 
@@ -53,25 +63,25 @@ SetFit uses contrastive learning to fine-tune a sentence transformer, then train
 
 **Output**: `(value: str, confidence: float, flag: "classified" | "unclear")`
 
-**Model storage**: `models/{dimension_name}/` (~90MB per dimension)
+**Model storage**: `models/{SHOP}/{dimension_name}/` (~90MB per dimension)
 
 ## Data Flow
 
 ```
 run_pipeline.py
   │
-  ├─ load_dimensions()          config/dimensions.yaml + data/examples.json → List[DimensionConfig]
+  ├─ load_dimensions()               shops/{SHOP}/dimensions.yaml + examples.json → List[DimensionConfig]
   │
-  ├─ generate_synthetic_dataset()  → data/comments_clean_demo.json
-  │                                  data/ground_truth_demo.json
+  ├─ generate_synthetic_dataset()    → data/{SHOP}/comments_clean_demo.json
+  │                                    data/{SHOP}/ground_truth_demo.json
   │
-  ├─ train/load SetFit models   → models/{dim}/
+  ├─ train/load SetFit models        → models/{SHOP}/{dim}/
   │
-  ├─ run_pipeline()             → data/predictions_demo.json
+  ├─ run_pipeline()                  → data/{SHOP}/predictions_demo.json
   │
-  ├─ evaluate()                 → data/evaluation_demo.json
+  ├─ evaluate()                      → data/{SHOP}/evaluation_demo.json
   │
-  └─ streamlit run app.py       reads all JSON files, renders dashboard
+  └─ streamlit run app.py            reads all JSON files, renders dashboard
 ```
 
 ## Prediction Schema
@@ -110,7 +120,19 @@ Each comment gets a prediction object per dimension:
 
 ## Configuration System
 
-### dimensions.yaml
+### Shop Selection
+
+Set `SHOP` in `localtailor/config.py` to choose the active shop. The `shop_paths()` function resolves all paths:
+
+```python
+from localtailor.config import SHOP, shop_paths
+
+paths = shop_paths()       # uses active SHOP
+paths = shop_paths("shoe") # override for a specific shop
+# Returns: {shop, dimensions, examples, data_dir, models_dir}
+```
+
+### dimensions.yaml (`shops/{SHOP}/dimensions.yaml`)
 
 Defines dimension structure. Each dimension has:
 - `name`: Unique identifier (lowercase, underscores)
@@ -119,7 +141,7 @@ Defines dimension structure. Each dimension has:
 
 Minimum 2 values per dimension. The description is used to build better QA questions for span extraction.
 
-### examples.json
+### examples.json (`shops/{SHOP}/examples.json`)
 
 Training examples organized as `{dimension_name: {label: [examples...]}}`. Kept separate from dimensions.yaml because:
 - Dimensions are stable (structure rarely changes)
@@ -165,7 +187,7 @@ Both formats are saved to `reports/report_{post_id}_{timestamp}.{html,pdf}`.
 ### Module-level setup
 - Adds project root to `sys.path` so `from localtailor.*` imports work
 - Loads JSON data files at startup (comments, predictions, evaluation)
-- Constants: `POST_ID = "demo"`, `DIMENSIONS_YAML = "config/dimensions.yaml"`
+- Paths resolve from `shop_paths()` — automatically scoped to the active `SHOP`
 
 ### Views
 
@@ -207,7 +229,7 @@ streamlit run localtailor/app.py --server.headless true
 
 ### Cleanup
 
-`python clean.py` removes all generated files (models, predictions, evaluations, reports, synthetic data) without touching config, examples, or the virtual environment.
+`python clean.py` removes generated files for the active shop. Use `python clean.py --all` to clean all shops. Neither touches shop definitions (`shops/`), source code, or the virtual environment.
 
 ### Server deployment
 
@@ -233,7 +255,13 @@ GPU is not required — CPU inference is fast enough for datasets under ~1000 co
 
 ## Synthetic Dataset (`synthetic.py`)
 
-Generates 150 pillow shop comments with ground truth labels for all 6 dimensions. Designed to test edge cases:
+Each shop defines its own synthetic comments and ground truth in `shops/{SHOP}/synthetic.py`. The dispatcher in `localtailor/synthetic.py` imports the active shop's module and generates the standard JSON files.
+
+Built-in shops:
+- **pillow** — 127 comments across 6 dimensions (comfort, shape, durability, price_value, intent, tone)
+- **shoe** — 116 comments across 7 dimensions (fit, comfort, durability, price_value, style, intent, tone)
+
+Comments are designed to test realistic edge cases:
 - Multi-dimension comments (one comment covers comfort + price + shape)
 - Short/ambiguous comments
 - Sarcastic comments
@@ -241,20 +269,25 @@ Generates 150 pillow shop comments with ground truth labels for all 6 dimensions
 - N/A dimensions (comment mentions one thing, silent on others)
 
 Output:
-- `data/comments_clean_demo.json` — comment list with IDs, messages, timestamps, like counts
-- `data/ground_truth_demo.json` — per-comment ground truth for all dimensions
+- `data/{SHOP}/comments_clean_demo.json` — comment list with IDs, messages, timestamps, like counts
+- `data/{SHOP}/ground_truth_demo.json` — per-comment ground truth for all dimensions
+
+See [Creating a New Shop](creating_a_shop.md) for how to add a new shop with its own synthetic dataset.
 
 ## File-by-File Reference
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `run_pipeline.py` | ~120 | CLI entry point, orchestrates all steps |
-| `localtailor/config.py` | ~150 | DimensionConfig dataclass, YAML/JSON loader |
-| `localtailor/synthetic.py` | ~900 | 150-comment synthetic dataset with ground truth |
-| `localtailor/span_extractor.py` | ~150 | RoBERTa span extraction |
-| `localtailor/setfit_trainer.py` | ~200 | SetFit training + inference per dimension |
-| `localtailor/pipeline.py` | ~155 | Orchestrates span → classify |
-| `localtailor/evaluator.py` | ~224 | Accuracy metrics |
-| `localtailor/reporter.py` | ~396 | Jinja2 HTML + fpdf2 PDF report generation |
-| `localtailor/app.py` | ~830 | Streamlit dashboard (5 views) |
-| `localtailor/embedder.py` | ~60 | BERT sentence embeddings (utility, not in main pipeline) |
+| File | Purpose |
+|------|---------|
+| `run_pipeline.py` | CLI entry point, orchestrates all steps |
+| `localtailor/config.py` | SHOP variable, shop_paths(), DimensionConfig dataclass, YAML/JSON loader |
+| `localtailor/synthetic.py` | Dispatcher — imports and runs `shops/{SHOP}/synthetic.py` |
+| `localtailor/span_extractor.py` | RoBERTa span extraction |
+| `localtailor/setfit_trainer.py` | SetFit training + inference per dimension |
+| `localtailor/pipeline.py` | Orchestrates span -> classify |
+| `localtailor/evaluator.py` | Accuracy metrics |
+| `localtailor/reporter.py` | Jinja2 HTML + fpdf2 PDF report generation |
+| `localtailor/app.py` | Streamlit dashboard (5 views) |
+| `localtailor/embedder.py` | BERT sentence embeddings (utility, not in main pipeline) |
+| `shops/{SHOP}/dimensions.yaml` | Dimension definitions for a shop |
+| `shops/{SHOP}/examples.json` | Training examples for a shop |
+| `shops/{SHOP}/synthetic.py` | Synthetic comments + ground truth for a shop |

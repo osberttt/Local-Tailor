@@ -2,7 +2,7 @@
 
 ## Overview
 
-Local Tailor fetches comments from Facebook Page posts via the Graph API. All data stays local — the API is called directly from the user's machine, and comments are saved to `data/comments_clean_{post_id}.json`.
+Local Tailor fetches comments from Facebook Page posts via the Graph API. All data stays local — the API is called directly from the user's machine, and comments are saved to `data/{SHOP}/comments_clean_{post_id}.json`.
 
 ## Prerequisites
 
@@ -168,7 +168,9 @@ def save_comments(fb_comments, post_id):
         "comments": comments,
     }
 
-    path = f"data/comments_clean_{post_id}.json"
+    from localtailor.config import shop_paths
+    data_dir = shop_paths()["data_dir"]
+    path = f"{data_dir}/comments_clean_{post_id}.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
@@ -251,7 +253,7 @@ User pastes access token in Login view
 User pastes post URL in Facebook view
   → post ID extracted from URL
   → comments fetched via Graph API (paginated)
-  → saved to data/comments_clean_{post_id}.json
+  → saved to data/{SHOP}/comments_clean_{post_id}.json
 
 User runs: python run_pipeline.py predict
   → loads existing models

@@ -17,7 +17,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # 4. Run the full pipeline + open the dashboard
-python run_pipeline.py
+python run_pipeline.py setup
 ```
 
 The dashboard opens at **http://localhost:8501** when done.
@@ -26,16 +26,31 @@ The dashboard opens at **http://localhost:8501** when done.
 - `all-MiniLM-L6-v2` — SetFit base model (~80MB)
 - `deepset/roberta-base-squad2` — span extractor (~500MB)
 
+## Multi-Shop Support
+
+Local Tailor supports multiple shops. Each shop has its own dimensions, training examples, and synthetic dataset. Switch between shops by changing one line in `localtailor/config.py`:
+
+```python
+SHOP = "pillow"   # switch to "shoe", or any shop you create
+```
+
+**Built-in shops**: `pillow` (6 dimensions), `shoe` (7 dimensions)
+
+To create your own shop, see [Creating a New Shop](docs/creating_a_shop.md).
+
 ## Common Commands
 
 | What you want to do | Command |
 |----------------------|---------|
 | New user (download models + open empty UI to configure) | `python run_pipeline.py user` |
-| Developer setup (demo config + synthetic data + train + predict + eval + UI) | `python run_pipeline.py setup` |
+| Full setup (synthetic data + train + predict + eval + UI) | `python run_pipeline.py setup` |
 | Retrain after editing dimensions/examples | `python run_pipeline.py retrain` |
 | Predict on new/updated comments | `python run_pipeline.py predict` |
 | Just open the dashboard | `python run_pipeline.py load-data` |
-| Clean up all generated files and models | `python clean.py` |
+| Clean up active shop's generated files | `python clean.py` |
+| Clean up all shops' generated files | `python clean.py --all` |
+
+All commands automatically use the shop set in `localtailor/config.py`.
 
 ## Dashboard Views
 
@@ -53,11 +68,11 @@ The dashboard opens at **http://localhost:8501** when done.
 1. Go to **Config** in the sidebar
 2. Add/remove dimensions, values, and examples
 3. Click **Save changes**
-4. Run `python run_pipeline.py --retrain` to apply
+4. Run `python run_pipeline.py retrain` to apply
 
 ### Option B: Edit files directly
 
-**Training examples** — `data/examples.json`:
+**Training examples** — `shops/{SHOP}/examples.json`:
 ```json
 {
   "comfort": {
@@ -67,7 +82,7 @@ The dashboard opens at **http://localhost:8501** when done.
 }
 ```
 
-**Dimension structure** — `config/dimensions.yaml`:
+**Dimension structure** — `shops/{SHOP}/dimensions.yaml`:
 ```yaml
 dimensions:
   - name: comfort
@@ -88,8 +103,8 @@ SetFit retrains in ~30 seconds per dimension on CPU.
 
 ## Adding a New Dimension
 
-1. Add a block to `config/dimensions.yaml` (min 2 values)
-2. Add matching examples to `data/examples.json` (8 per class recommended)
+1. Add a block to `shops/{SHOP}/dimensions.yaml` (min 2 values)
+2. Add matching examples to `shops/{SHOP}/examples.json` (8 per class recommended)
 3. Run `python run_pipeline.py retrain`
 
 Or use the **Config** view in the dashboard to do all three steps visually.
@@ -112,24 +127,27 @@ local-tailor/
 ├── run_pipeline.py                ← entry point (pipeline + UI launcher)
 ├── clean.py                       ← delete all generated files and models
 ├── requirements.txt               ← pip dependencies
-├── demo/                          ← dev/demo pillow shop config (read-only reference)
-│   ├── dimensions.yaml            ← demo dimensions (copied to config/ by 'demo' mode)
-│   └── examples.json              ← demo examples (copied to data/ by 'demo' mode)
-├── config/                        ← user's active config (created by setup/demo)
-│   └── dimensions.yaml
-├── data/
-│   ├── examples.json              ← user's training examples
+├── shops/                         ← shop definitions (one folder per shop)
+│   ├── pillow/
+│   │   ├── dimensions.yaml        ← pillow shop dimensions
+│   │   ├── examples.json          ← pillow shop training examples
+│   │   └── synthetic.py           ← pillow shop synthetic comments + ground truth
+│   └── shoe/
+│       ├── dimensions.yaml        ← shoe shop dimensions
+│       ├── examples.json          ← shoe shop training examples
+│       └── synthetic.py           ← shoe shop synthetic comments + ground truth
+├── data/{SHOP}/                   ← generated data scoped per shop
 │   ├── comments_clean_demo.json   ← comments dataset (synthetic or fetched)
 │   ├── predictions_demo.json      ← model predictions per comment
 │   ├── ground_truth_demo.json     ← ground truth labels (synthetic only)
 │   └── evaluation_demo.json       ← accuracy metrics
-├── models/                        ← trained SetFit models (one folder per dimension)
+├── models/{SHOP}/                 ← trained SetFit models (one folder per dimension)
 ├── reports/                       ← exported HTML/PDF reports
 ├── templates/
 │   └── report.html                ← Jinja2 HTML report template
 └── localtailor/
-    ├── config.py                  ← DimensionConfig + YAML/JSON loader
-    ├── synthetic.py               ← synthetic demo dataset generator
+    ├── config.py                  ← SHOP variable, shop_paths(), DimensionConfig loader
+    ├── synthetic.py               ← dispatches to shops/{SHOP}/synthetic.py
     ├── embedder.py                ← sentence embeddings utility
     ├── span_extractor.py          ← RoBERTa span extraction
     ├── setfit_trainer.py          ← SetFit train + predict per dimension
@@ -141,6 +159,6 @@ local-tailor/
 
 ## Further Documentation
 
-- [User Guide](docs/user_guide.md) — step-by-step instructions for non-technical users
+- [Creating a New Shop](docs/creating_a_shop.md) — step-by-step guide to adding a new shop
 - [Technical Reference](docs/technical.md) — architecture, pipeline internals, deployment
 - [Facebook Integration](docs/facebook_integration.md) — connecting to Facebook Graph API

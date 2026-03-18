@@ -1,0 +1,98 @@
+# Local Tailor — Shoe Shop Dimension Configuration
+# =================================================
+# Defines WHAT dimensions exist and WHAT each value means.
+# Training examples live separately in shops/shoe/examples.json
+#
+# To add a dimension: add a block here, then add examples to shops/shoe/examples.json
+# To retrain: edit examples then run: python run_pipeline.py retrain
+
+dimensions:
+
+  # ── Fit ──────────────────────────────────────────────────────────────────────
+  - name: fit
+    enabled: true
+    values:
+      - label: "too tight"
+        description: "The shoe is too narrow, squeezes the foot, or feels constricting"
+      - label: "true to size"
+        description: "The shoe fits as expected, comfortable and accurate sizing"
+      - label: "too loose"
+        description: "The shoe is too wide, too big, or the foot slides around"
+      - label: "breaks in"
+        description: "Fit improves or changes after wearing the shoe for a while"
+
+  # ── Comfort ──────────────────────────────────────────────────────────────────
+  - name: comfort
+    enabled: true
+    values:
+      - label: "very comfortable"
+        description: "Great cushioning, support, and overall foot comfort"
+      - label: "average comfort"
+        description: "Acceptable comfort, nothing special or noteworthy"
+      - label: "uncomfortable"
+        description: "Causes pain, blisters, soreness, or foot fatigue"
+
+  # ── Durability ───────────────────────────────────────────────────────────────
+  - name: durability
+    enabled: true
+    values:
+      - label: "lasts well"
+        description: "The shoe holds up well over time, durable construction"
+      - label: "wears out fast"
+        description: "Sole, stitching, or material deteriorates quickly"
+      - label: "too early to tell"
+        description: "Product is new, not enough time to judge longevity"
+
+  # ── Price & Value ────────────────────────────────────────────────────────────
+  - name: price_value
+    enabled: true
+    values:
+      - label: "too expensive"
+        description: "Shoe is overpriced or not worth the cost"
+      - label: "good value"
+        description: "Reasonable price for the quality received"
+      - label: "worth it"
+        description: "Excellent value, great quality for the price paid"
+
+  # ── Style ────────────────────────────────────────────────────────────────────
+  - name: style
+    enabled: true
+    values:
+      - label: "looks great"
+        description: "Attractive design, gets compliments, matches expectations"
+      - label: "looks different"
+        description: "Appearance differs from photos or expectations"
+      - label: "looks cheap"
+        description: "Low-quality appearance, poor finish or materials visible"
+
+  # ── Intent ───────────────────────────────────────────────────────────────────
+  - name: intent
+    enabled: true
+    values:
+      - label: "needs reply"
+        description: "Comment contains a direct question awaiting an answer"
+      - label: "positive review"
+        description: "Compliment, recommendation, or positive experience shared"
+      - label: "negative review"
+        description: "Complaint, warning to others, or negative experience shared"
+      - label: "comparison"
+        description: "Comment compares this product to another brand or product"
+      - label: "monitor"
+        description: "Discussion or general conversation worth watching"
+      - label: "spam"
+        description: "Off-topic, promotional, or unrelated comment"
+
+  # ── Tone ─────────────────────────────────────────────────────────────────────
+  - name: tone
+    enabled: true
+    values:
+      - label: "happy"
+        description: "Enthusiastic, delighted, or clearly satisfied"
+      - label: "curious"
+        description: "Asking questions, wondering, or expressing uncertainty"
+      - label: "disappointed"
+        description: "Let down, expected better, or quietly dissatisfied"
+      - label: "angry"
+        description: "Frustrated, upset, or strongly negative in tone"
+      - label: "neutral"
+        description: "Factual, informational, or no strong emotional tone"

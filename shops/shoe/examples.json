@@ -1,0 +1,296 @@
+{
+  "_readme": "Training examples for SetFit classifiers. Edit these and run: python run_pipeline.py retrain",
+  "_format": "{ dimension_name: { value_label: [ example1, example2, ... ] } }",
+  "_recommended_per_class": 8,
+
+  "fit": {
+    "too tight": [
+      "these shoes are way too narrow, my toes are crushed",
+      "very tight across the top, had to return them",
+      "squeezes my feet painfully, not comfortable at all",
+      "my pinky toe is being crushed even after sizing up",
+      "too narrow for wide feet, don't bother if you have wide feet",
+      "the toe box is ridiculously tight, can barely move my toes",
+      "feels like my feet are in a vice, very constricting",
+      "had to size up twice and they're still too snug"
+    ],
+    "true to size": [
+      "fits perfectly, exactly as expected for my size",
+      "ordered my usual size and it fits like a glove",
+      "true to size, no need to size up or down",
+      "perfect fit right out of the box",
+      "sizing is accurate, very happy with the fit",
+      "fits my feet perfectly, great sizing",
+      "spot on with the size chart, fits well",
+      "comfortable fit, exactly my normal size"
+    ],
+    "too loose": [
+      "way too big, my feet slide around inside",
+      "the heel keeps slipping out when I walk",
+      "too wide for my narrow feet, very sloppy fit",
+      "had to add insoles just to make them fit properly",
+      "runs large, should have ordered a size down",
+      "so loose I need to wear thick socks to fill them",
+      "my foot moves around too much, no support",
+      "the fit is very loose, feels like wearing slippers"
+    ],
+    "breaks in": [
+      "tight at first but after a week they fit perfectly",
+      "needed about three days of wearing to break in",
+      "stiff initially but the leather softened nicely over time",
+      "first few wears were rough but now they're great",
+      "give them a few days, the fit improves dramatically",
+      "took about a week to mould to my feet properly",
+      "uncomfortable at first but well worth the break-in period",
+      "the material loosened up and now they fit perfectly"
+    ]
+  },
+
+  "comfort": {
+    "very comfortable": [
+      "like walking on clouds, my feet feel amazing all day",
+      "the cushioning is incredible, no foot fatigue at all",
+      "most comfortable shoes I've ever owned",
+      "can wear these all day without any pain",
+      "the arch support is perfect, my feet love these",
+      "extremely comfortable from the first step",
+      "great padding and support, my feet never hurt",
+      "walked 10km and my feet still felt fresh"
+    ],
+    "average comfort": [
+      "they're okay, nothing special in terms of comfort",
+      "decent enough for everyday wear but nothing amazing",
+      "comfort is acceptable, not the best not the worst",
+      "fine for short walks but not for standing all day",
+      "average cushioning, does the job",
+      "not uncomfortable but not particularly comfy either",
+      "standard comfort level, nothing to write home about",
+      "they're alright, wouldn't call them super comfortable"
+    ],
+    "uncomfortable": [
+      "these gave me blisters after just one hour of wearing",
+      "my feet are killing me after wearing these all day",
+      "zero cushioning, it's like walking on concrete",
+      "the sole is so hard my feet ache after an hour",
+      "rubbed my heel raw within the first day",
+      "painful to wear, absolutely no arch support",
+      "my feet were in agony, worst shoes I've ever worn",
+      "the insole is paper thin, no comfort whatsoever"
+    ]
+  },
+
+  "durability": {
+    "lasts well": [
+      "had these for two years and they still look new",
+      "incredibly durable, survived rain and rough terrain",
+      "the sole shows barely any wear after a year of daily use",
+      "solid construction, these are built to last",
+      "still going strong after 18 months of heavy use",
+      "the stitching is perfect, no signs of coming apart",
+      "great quality materials, these will last for years",
+      "wore them every day for a year and they held up perfectly"
+    ],
+    "wears out fast": [
+      "the sole came unglued after just two months",
+      "stitching started unraveling within weeks",
+      "the rubber sole wore through in under three months",
+      "terrible durability, fell apart way too quickly",
+      "the material started peeling after a few wears",
+      "heel wore down unevenly after just a month",
+      "the insole disintegrated after a few weeks of use",
+      "cheap construction, both shoes had defects within months"
+    ],
+    "too early to tell": [
+      "just got them yesterday, will update on durability later",
+      "only worn them twice so can't comment on longevity yet",
+      "too soon to judge, but first impressions are good",
+      "brand new, ask me again in a few months",
+      "just unboxed them, they look well made though",
+      "only had them for a week, so far so good",
+      "early days still, will report back on durability",
+      "not enough time to judge yet, look solid though"
+    ]
+  },
+
+  "price_value": {
+    "too expensive": [
+      "way overpriced for the quality you get",
+      "not worth the money, expected much better at this price",
+      "I've had better shoes for half the price",
+      "ridiculously expensive for what is basically a cheap shoe",
+      "the price tag does not match the quality at all",
+      "premium price but economy quality, very disappointed",
+      "too pricey, there are much better options out there",
+      "felt ripped off after seeing the actual quality"
+    ],
+    "good value": [
+      "solid shoe for the price, can't complain",
+      "reasonable price point for decent quality",
+      "good value for money, happy with the purchase",
+      "affordable and does exactly what I needed",
+      "the price is fair for what you're getting",
+      "decent quality at a sensible price",
+      "not the cheapest but worth every penny",
+      "great deal, especially on sale"
+    ],
+    "worth it": [
+      "absolutely worth the investment, best shoes I own",
+      "expensive but the quality completely justifies it",
+      "worth every cent, my feet have never been happier",
+      "the best money I've spent on footwear",
+      "premium quality that actually matches the premium price",
+      "totally worth splurging on, exceptional craftsmanship",
+      "you get what you pay for and these deliver",
+      "investing in good shoes is always worth it and these prove it"
+    ]
+  },
+
+  "style": {
+    "looks great": [
+      "these shoes look absolutely stunning, so many compliments",
+      "the design is beautiful, exactly like the photos",
+      "love the look, they go with everything",
+      "stylish and sleek, very happy with the appearance",
+      "the colour is gorgeous, even better in person",
+      "everyone asks me where I got these, they look amazing",
+      "the design is clean and modern, love the aesthetic",
+      "they look premium and fashionable, very impressed"
+    ],
+    "looks different": [
+      "the colour is quite different from the photos online",
+      "doesn't look the same as advertised, slightly disappointed",
+      "the shape looks different in person compared to the website",
+      "not exactly what I expected visually but still okay",
+      "the material looks different from the product images",
+      "the shade of the colour is off from what was shown",
+      "looks a bit different to the pictures, but acceptable",
+      "the design details are slightly different from the listing"
+    ],
+    "looks cheap": [
+      "the material looks really cheap and plasticky",
+      "these look like knockoffs, very poor finish",
+      "the glue is visible everywhere, looks terrible",
+      "cheap looking stitching and poor quality materials",
+      "looks like something from a discount bin honestly",
+      "the finish is awful, scuff marks straight out of the box",
+      "the sole looks cheap and the upper material is thin",
+      "everything about the appearance screams low quality"
+    ]
+  },
+
+  "intent": {
+    "needs reply": [
+      "do these come in wide width options?",
+      "what size should I order if I'm usually a 9.5?",
+      "are these waterproof or water resistant?",
+      "how long does shipping take to my area?",
+      "can these be used for running or just casual wear?",
+      "do you have these in any other colours?",
+      "what's the return policy if they don't fit?",
+      "is the sole replaceable when it wears out?"
+    ],
+    "positive review": [
+      "absolutely love these shoes, best purchase this year",
+      "highly recommend to anyone looking for quality footwear",
+      "five stars, couldn't be happier with these",
+      "amazing shoes, everyone should try them",
+      "the best shoes I've bought in years, so happy",
+      "fantastic quality, will definitely buy another pair",
+      "can't say enough good things about these shoes",
+      "perfect in every way, already planning to buy more"
+    ],
+    "negative review": [
+      "do not buy these, complete waste of money",
+      "worst shoes I've ever purchased, returning immediately",
+      "terrible quality, avoid these at all costs",
+      "deeply regret this purchase, they're awful",
+      "save your money, these are garbage",
+      "disappointed beyond words, nothing like advertised",
+      "the worst purchase I've made this year by far",
+      "would give zero stars if I could, avoid"
+    ],
+    "comparison": [
+      "much better than my Nike pair for everyday wear",
+      "similar to Adidas Ultraboost but at a better price",
+      "not as comfortable as my old New Balance ones",
+      "compared to Converse, these have way more cushioning",
+      "better build quality than the Puma equivalent",
+      "I tried three brands and these came out on top",
+      "feels completely different to my previous pair",
+      "an upgrade from what I was wearing before"
+    ],
+    "monitor": [
+      "interesting to see how these compare to the competition",
+      "a lot of mixed reviews on these, hard to decide",
+      "been eyeing these for a while, might pull the trigger",
+      "curious what others think about the new colourway",
+      "seeing a lot of people wearing these lately",
+      "thinking about getting a pair after reading comments",
+      "the reviews seem very polarised on this one",
+      "might try these out based on what people are saying"
+    ],
+    "spam": [
+      "check out my page for the best shoe deals online",
+      "visit our store for similar styles at lower prices",
+      "follow me for daily sneaker reviews and unboxings",
+      "I sell authentic shoes at wholesale prices DM me",
+      "great shoes! also check out our new collection",
+      "DM me for discount codes on all footwear brands",
+      "totally unrelated but our store has a massive sale",
+      "nice kicks, also our shop has 50% off this weekend"
+    ]
+  },
+
+  "tone": {
+    "happy": [
+      "absolutely obsessed with these shoes, so happy!",
+      "love love love them, best thing I've bought all year",
+      "so thrilled with this purchase, they're perfect",
+      "these make me smile every time I put them on",
+      "beyond happy, exactly what I was looking for",
+      "delighted with the quality, five stars!",
+      "couldn't be happier, these exceeded all expectations",
+      "genuinely made my day when I opened the box"
+    ],
+    "curious": [
+      "wondering if these run small or true to size?",
+      "not sure which colour to go with, any suggestions?",
+      "has anyone tried these for hiking or just casual?",
+      "curious how long these last with daily wear",
+      "thinking about getting these, worth it?",
+      "does the leather stretch over time or stay tight?",
+      "I'm between two sizes, which should I order?",
+      "is the sole soft or firm? can't tell from photos"
+    ],
+    "disappointed": [
+      "expected much better quality for this price honestly",
+      "a bit let down, thought they'd be nicer in person",
+      "not quite what I was hoping for from this brand",
+      "underwhelming compared to the hype around them",
+      "sadly not as good as the reviews made them sound",
+      "the photos made them look much better than they are",
+      "it's fine but I expected more for what I paid",
+      "disappointed with the fit after all the good reviews"
+    ],
+    "angry": [
+      "absolutely furious, these are the worst shoes ever",
+      "so angry, this is false advertising plain and simple",
+      "unacceptable quality, I want my money back now",
+      "extremely frustrated, completely useless product",
+      "disgusted by the quality, never buying this brand again",
+      "this is a scam, don't waste your hard-earned money",
+      "furious that I wasted money on this garbage",
+      "outraged by the terrible quality and customer service"
+    ],
+    "neutral": [
+      "arrived in three days, packaging was fine",
+      "standard shoes, they do what they're supposed to",
+      "received as described, no issues with the order",
+      "used them for two weeks, nothing special to report",
+      "they're shoes, they work fine for walking",
+      "average product, neither impressed nor disappointed",
+      "the sizing matches the chart, no complaints",
+      "nothing remarkable, just a basic functional shoe"
+    ]
+  }
+}

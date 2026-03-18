@@ -2,7 +2,7 @@
 localtailor/setfit_trainer.py
 ==============================
 Trains one SetFit model per dimension using labeled examples from dimensions.yaml.
-Saves each trained model to models/{dimension_name}/.
+Saves each trained model to models/{SHOP}/{dimension_name}/.
 Runs inference on extracted spans to produce dimension value + confidence.
 
 SetFit architecture:
@@ -24,18 +24,18 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from localtailor.config import DimensionConfig
+from localtailor.config import DimensionConfig, shop_paths
 
 THRESHOLD_CLASSIFY = 0.35   # below this → Unclear
-MODEL_BASE = "models"
 
 
 class SetFitDimensionClassifier:
     """Manages training and inference for a single dimension's SetFit model."""
 
-    def __init__(self, dimension: DimensionConfig):
+    def __init__(self, dimension: DimensionConfig, models_dir: str | None = None):
         self.dimension = dimension
-        self.model_path = Path(MODEL_BASE) / dimension.name
+        self._models_dir = models_dir or shop_paths()["models_dir"]
+        self.model_path = Path(self._models_dir) / dimension.name
         self._model = None
 
     # ── Training ──────────────────────────────────────────────────────────────
@@ -199,17 +199,20 @@ class SetFitDimensionClassifier:
 def train_all_dimensions(
     dimensions: List[DimensionConfig],
     force: bool = False,
+    models_dir: str | None = None,
 ) -> Dict[str, SetFitDimensionClassifier]:
     """Train SetFit models for all dimensions. Returns dict of classifiers.
 
     Args:
         dimensions: List of DimensionConfig objects.
         force:      Retrain all even if models already exist.
+        models_dir: Override model output directory.
 
     Returns:
         {dimension_name: SetFitDimensionClassifier}
     """
-    Path(MODEL_BASE).mkdir(exist_ok=True)
+    m_dir = models_dir or shop_paths()["models_dir"]
+    Path(m_dir).mkdir(parents=True, exist_ok=True)
     classifiers = {}
 
     print(f"\n{'='*60}")
@@ -217,7 +220,7 @@ def train_all_dimensions(
     print(f"{'='*60}")
 
     for dim in dimensions:
-        clf = SetFitDimensionClassifier(dim)
+        clf = SetFitDimensionClassifier(dim, models_dir=m_dir)
         clf.train(force=force)
         classifiers[dim.name] = clf
 
@@ -227,11 +230,13 @@ def train_all_dimensions(
 
 def load_all_classifiers(
     dimensions: List[DimensionConfig],
+    models_dir: str | None = None,
 ) -> Dict[str, SetFitDimensionClassifier]:
     """Load pre-trained classifiers without retraining."""
+    m_dir = models_dir or shop_paths()["models_dir"]
     classifiers = {}
     for dim in dimensions:
-        clf = SetFitDimensionClassifier(dim)
+        clf = SetFitDimensionClassifier(dim, models_dir=m_dir)
         if not clf.is_trained():
             raise FileNotFoundError(
                 f"No model for '{dim.name}'. Run with --retrain first."

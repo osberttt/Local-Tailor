@@ -31,12 +31,15 @@ import yaml
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
+from localtailor.config import SHOP, shop_paths
+
+_PATHS = shop_paths()
 POST_ID = "demo"
-COMMENTS_PATH = Path(f"data/comments_clean_{POST_ID}.json")
-PREDICTIONS_PATH = Path(f"data/predictions_{POST_ID}.json")
-EVAL_PATH = Path(f"data/evaluation_{POST_ID}.json")
-DIMENSIONS_YAML = Path("config/dimensions.yaml")
-EXAMPLES_JSON = Path("data/examples.json")
+COMMENTS_PATH = Path(_PATHS["data_dir"]) / f"comments_clean_{POST_ID}.json"
+PREDICTIONS_PATH = Path(_PATHS["data_dir"]) / f"predictions_{POST_ID}.json"
+EVAL_PATH = Path(_PATHS["data_dir"]) / f"evaluation_{POST_ID}.json"
+DIMENSIONS_YAML = Path(_PATHS["dimensions"])
+EXAMPLES_JSON = Path(_PATHS["examples"])
 
 INTENT_PRIORITY = [
     "needs reply", "negative review", "Unclear",
@@ -617,7 +620,7 @@ def _save_config(dims_raw, examples):
 
 def render_config_editor():
     st.title("⚙️ Config Editor")
-    st.caption("Edit dimensions, values, and training examples. Changes are saved to config/dimensions.yaml and data/examples.json.")
+    st.caption(f"Edit dimensions, values, and training examples. Changes are saved to {DIMENSIONS_YAML} and {EXAMPLES_JSON}.")
 
     dims_raw, examples = _load_config_raw()
 
@@ -769,7 +772,7 @@ def render_config_editor():
     # ── Save button ──────────────────────────────────────────────────────────
     if st.button("Save changes", type="primary", use_container_width=True):
         _save_config(dims, exs)
-        st.success("Saved to config/dimensions.yaml and data/examples.json")
+        st.success(f"Saved to {DIMENSIONS_YAML} and {EXAMPLES_JSON}")
         st.caption("Run `python run_pipeline.py retrain` to retrain with the updated config.")
 
 

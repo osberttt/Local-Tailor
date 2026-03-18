@@ -3,23 +3,29 @@ Local Tailor — Pipeline Entry Point
 =====================================
 Usage:
   python run_pipeline.py user         # download models + launch empty UI for user to configure
-  python run_pipeline.py setup        # copy demo config + synthetic data + train + predict + eval + UI
+  python run_pipeline.py setup        # generate synthetic data + train + predict + eval + UI
   python run_pipeline.py retrain      # retrain models after editing dimensions/examples + predict + UI
   python run_pipeline.py predict      # load existing models + predict on current comments + UI
   python run_pipeline.py load-data    # just launch the Streamlit UI
 
+Shop switching:
+  Set SHOP in localtailor/config.py (e.g. SHOP = "pillow" or SHOP = "shoe").
+  All data, models, and config paths resolve automatically from shops/{SHOP}/.
+
 Files:
-  config/dimensions.yaml   — user's dimension config (created via UI or setup)
-  data/examples.json       — user's training examples (created via UI or setup)
-  demo/dimensions.yaml     — dev/demo pillow shop dimensions (read-only reference)
-  demo/examples.json       — dev/demo pillow shop examples (read-only reference)
+  shops/{SHOP}/dimensions.yaml  — dimension config for the active shop
+  shops/{SHOP}/examples.json    — training examples for the active shop
+  shops/{SHOP}/synthetic.py     — synthetic comments + ground truth definitions
+  data/{SHOP}/                  — generated data (predictions, evaluation, etc.)
+  models/{SHOP}/                — trained SetFit models
 """
 
 import argparse
-import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+from localtailor.config import SHOP, shop_paths
 
 MODES = ["user", "setup", "retrain", "predict", "load-data"]
 
@@ -31,7 +37,7 @@ def parse_args():
         epilog="\n".join([
             "Modes:",
             "  user         Download models, launch empty UI for initial configuration",
-            "  setup        Copy demo config, generate synthetic data, train, predict, evaluate, launch UI",
+            "  setup        Generate synthetic data, train, predict, evaluate, launch UI",
             "  retrain      Retrain all models after editing dimensions/examples, then predict + UI",
             "  predict      Load existing models, run predictions on current comments, launch UI",
             "  load-data    Skip all processing, just launch the Streamlit dashboard",
@@ -60,9 +66,8 @@ def _model_cached(model_name: str) -> bool:
     """Check if a HuggingFace model is already cached locally."""
     try:
         from huggingface_hub import try_to_load_from_cache
-        # Check for a key file that every model has
         result = try_to_load_from_cache(model_name, "config.json")
-        return isinstance(result, str)  # returns path string if cached, None or sentinel otherwise
+        return isinstance(result, str)
     except Exception:
         return False
 
@@ -99,13 +104,15 @@ def download_models():
 def main():
     args = parse_args()
     mode = args.mode
+    paths = shop_paths()
 
     # Ensure output dirs
-    for d in ["data", "models", "config"]:
-        Path(d).mkdir(exist_ok=True)
+    Path(paths["data_dir"]).mkdir(parents=True, exist_ok=True)
+    Path(paths["models_dir"]).mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 60)
     print("  LOCAL TAILOR")
+    print(f"  Shop: {SHOP}")
     print("  Comment intelligence fitted to your business.")
     print("=" * 60 + "\n")
 
@@ -118,28 +125,24 @@ def main():
         launch_ui()
         return
 
-    # ── load-data: just launch UI ──────────────────────────────────────────────
+    # ── load-data: just launch UI ────────────────────────────────────────────
     if mode == "load-data":
         launch_ui()
         return
 
-    # ── setup: copy demo config + full pipeline ──────────────────────────────
+    # ── setup: synthetic data + full pipeline ────────────────────────────────
     if mode == "setup":
         print("[ 1 ] Downloading models...")
         download_models()
 
-        print("[ 2 ] Loading demo config (demo/ → config/ + data/)...")
-        demo_dir = Path("demo")
-        if not (demo_dir / "dimensions.yaml").exists():
-            print("\n  ERROR: demo/dimensions.yaml not found.")
+        print(f"[ 2 ] Loading shop config (shops/{SHOP}/)...")
+        shop_dim_path = Path(paths["dimensions"])
+        if not shop_dim_path.exists():
+            print(f"\n  ERROR: {shop_dim_path} not found.")
             sys.exit(1)
-        shutil.copy(demo_dir / "dimensions.yaml", "config/dimensions.yaml")
-        shutil.copy(demo_dir / "examples.json", "data/examples.json")
-        print("      Copied demo/dimensions.yaml → config/dimensions.yaml")
-        print("      Copied demo/examples.json   → data/examples.json\n")
 
         from localtailor.config import load_dimensions
-        dimensions = load_dimensions("config/dimensions.yaml")
+        dimensions = load_dimensions()
         print(f"      {len(dimensions)} dimensions: {[d.name for d in dimensions]}\n")
 
         print("[ 3 ] Generating synthetic dataset...")
@@ -159,28 +162,30 @@ def main():
             classifiers=classifiers,
             dimensions=dimensions,
             post_id="demo",
+            output_dir=paths["data_dir"],
         )
 
         print("[ 6 ] Evaluating against ground truth...")
         from localtailor.evaluator import evaluate
-        evaluate(predictions_path, gt_path, post_id="demo")
+        evaluate(predictions_path, gt_path, post_id="demo",
+                 output_dir=paths["data_dir"])
 
         launch_ui()
         return
 
-    # ── retrain / predict: require existing user config ────────────────────────
-    config_path = Path("config/dimensions.yaml")
-    if not config_path.exists() or config_path.stat().st_size < 10:
-        print("\n  ERROR: No dimensions found in config/dimensions.yaml.")
-        print("  Run 'user' to configure, or 'setup' for the dev dataset.\n")
+    # ── retrain / predict: require existing shop config ──────────────────────
+    dim_path = Path(paths["dimensions"])
+    if not dim_path.exists() or dim_path.stat().st_size < 10:
+        print(f"\n  ERROR: No dimensions found at {dim_path}.")
+        print(f"  Check shops/{SHOP}/ or switch SHOP in localtailor/config.py.\n")
         sys.exit(1)
 
     print("[ 1 ] Loading dimension config...")
     from localtailor.config import load_dimensions
-    dimensions = load_dimensions("config/dimensions.yaml")
+    dimensions = load_dimensions()
     print(f"      {len(dimensions)} dimensions: {[d.name for d in dimensions]}\n")
 
-    # ── Train or load models ───────────────────────────────────────────────────
+    # ── Train or load models ─────────────────────────────────────────────────
     if mode == "retrain":
         print("[ 2 ] Training SetFit models...")
         from localtailor.setfit_trainer import train_all_dimensions
@@ -195,15 +200,16 @@ def main():
             print("  Run 'retrain' to train models first.\n")
             sys.exit(1)
 
-    # ── Resolve comments path ──────────────────────────────────────────────────
-    comments_path = Path("data/comments_clean_demo.json")
-    gt_path = Path("data/ground_truth_demo.json")
+    # ── Resolve comments path ────────────────────────────────────────────────
+    data_dir = paths["data_dir"]
+    comments_path = Path(data_dir) / "comments_clean_demo.json"
+    gt_path = Path(data_dir) / "ground_truth_demo.json"
     if not comments_path.exists():
         print(f"\n  ERROR: {comments_path} not found.")
         print("  Fetch comments from Facebook or run 'setup' for synthetic data.\n")
         sys.exit(1)
 
-    # ── Run classification pipeline ────────────────────────────────────────────
+    # ── Run classification pipeline ──────────────────────────────────────────
     print("[ 3 ] Running classification pipeline...")
     from localtailor.pipeline import run_pipeline
     predictions_path = run_pipeline(
@@ -211,13 +217,15 @@ def main():
         classifiers=classifiers,
         dimensions=dimensions,
         post_id="demo",
+        output_dir=data_dir,
     )
 
-    # ── Evaluate (only if ground truth exists) ─────────────────────────────────
+    # ── Evaluate (only if ground truth exists) ───────────────────────────────
     if gt_path.exists():
         print("[ 4 ] Evaluating against ground truth...")
         from localtailor.evaluator import evaluate
-        evaluate(predictions_path, gt_path, post_id="demo")
+        evaluate(predictions_path, gt_path, post_id="demo",
+                 output_dir=data_dir)
 
     launch_ui()
 

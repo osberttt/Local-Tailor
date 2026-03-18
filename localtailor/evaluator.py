@@ -24,6 +24,7 @@ def evaluate(
     predictions_path: Path,
     ground_truth_path: Path,
     post_id: str,
+    output_dir: str | None = None,
 ) -> Dict:
     """Compare predictions against ground truth and produce metric report.
 
@@ -31,9 +32,10 @@ def evaluate(
         predictions_path:  Path to predictions_{post_id}.json
         ground_truth_path: Path to ground_truth_demo.json
         post_id:           Session ID for output filename
+        output_dir:        Override output directory (defaults to "data")
 
     Returns:
-        metrics dict (also saved to data/evaluation_{post_id}.json)
+        metrics dict (also saved to evaluation_{post_id}.json)
     """
     with open(predictions_path, "r", encoding="utf-8") as f:
         predictions = json.load(f)
@@ -129,7 +131,9 @@ def evaluate(
     }
 
     # Save metrics
-    output_path = Path("data") / f"evaluation_{post_id}.json"
+    _out_dir = Path(output_dir) if output_dir else Path("data")
+    _out_dir.mkdir(parents=True, exist_ok=True)
+    output_path = _out_dir / f"evaluation_{post_id}.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
 

@@ -39,6 +39,7 @@ def run_pipeline(
     classifiers: Dict[str, SetFitDimensionClassifier],
     dimensions: List[DimensionConfig],
     post_id: str,
+    output_dir: str | None = None,
 ) -> Path:
     """Run full span→classify pipeline on all comments.
 
@@ -47,6 +48,7 @@ def run_pipeline(
         classifiers:   Dict of {dim_name: SetFitDimensionClassifier}
         dimensions:    List of DimensionConfig (for descriptions)
         post_id:       Session ID for output filenames
+        output_dir:    Override output directory (defaults to "data")
 
     Returns:
         Path to predictions_{post_id}.json
@@ -60,20 +62,15 @@ def run_pipeline(
     # Load span extractor once (shared across all dims)
     span_extractor = SpanExtractor()
 
-    # Build dim_name → description map for better span extraction questions
-    dim_descriptions = {
-        d.name: d.values[0].description  # use first value's description as hint
-        for d in dimensions if d.values
-    }
-    # Better: use a general dimension description
-    dim_general_desc = {
-        "comfort": "how comfortable or supportive the pillow feels",
-        "shape": "the shape, thickness, height or loft of the pillow",
-        "durability": "how long the pillow lasts or holds up over time",
-        "price_value": "the price, cost or value for money",
-        "intent": "what the commenter is trying to do or ask",
-        "tone": "the emotional tone or feeling of the comment",
-    }
+    # Build dim_name → description from value descriptions
+    # Combines all value descriptions into a general dimension description
+    dim_general_desc = {}
+    for d in dimensions:
+        descs = [v.description for v in d.values if v.description]
+        if descs:
+            dim_general_desc[d.name] = "; ".join(descs[:3])
+        else:
+            dim_general_desc[d.name] = d.name.replace("_", " ")
 
     predictions: Dict[str, Dict] = {}
     total_comments = len(comments)
@@ -129,9 +126,9 @@ def run_pipeline(
         print(f"     time       : {elapsed:.1f}s")
 
     # Save predictions
-    output_dir = Path("data")
-    output_dir.mkdir(exist_ok=True)
-    pred_path = output_dir / f"predictions_{post_id}.json"
+    _out_dir = Path(output_dir) if output_dir else Path("data")
+    _out_dir.mkdir(parents=True, exist_ok=True)
+    pred_path = _out_dir / f"predictions_{post_id}.json"
 
     with open(pred_path, "w", encoding="utf-8") as f:
         json.dump(predictions, f, ensure_ascii=False, indent=2)

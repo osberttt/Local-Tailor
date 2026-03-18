@@ -146,15 +146,17 @@ For each comment × dimension pair, the pipeline runs:
 
 ## 4. Demo Flow
 
-The demo runs on a synthetic 150-comment pillow shop dataset with ground truth labels. This ensures a reproducible, controlled presentation with measurable results.
+Local Tailor supports multiple shops — each with its own dimensions, examples, and synthetic dataset. Switch shops by setting `SHOP` in `localtailor/config.py`. Built-in shops: `pillow` (6 dimensions, 127 comments) and `shoe` (7 dimensions, 116 comments).
+
+The demo runs on a synthetic shop dataset with ground truth labels. This ensures a reproducible, controlled presentation with measurable results.
 
 ### 4.1 Setup (before presenting)
 
-- Generate synthetic dataset: 150 comments covering comfort, shape, durability, price, intent, tone — including edge cases (sarcasm, short comments, multilabel)
-- Add ground truth labels to all 150 comments
-- Provide 8 labeled examples per class for each dimension (owner input simulation)
-- Train SetFit models — 6 dimensions × ~30 seconds = ~3 minutes total
-- Run full pipeline, save predictions.json
+- Set `SHOP = "pillow"` (or `"shoe"`) in `localtailor/config.py`
+- Run `python run_pipeline.py setup` — this generates synthetic data, trains models, runs predictions, and evaluates
+- Each shop's synthetic dataset includes edge cases: sarcasm, short comments, multilabel, N/A dimensions
+- 8 labeled examples per class provided in `shops/{SHOP}/examples.json`
+- SetFit trains in ~30 seconds per dimension on CPU
 
 ### 4.2 Live Demo Sequence
 
@@ -299,24 +301,33 @@ Insight: customers care most about comfort and shape. No one is talking about pa
 | Phase 2 | User Interface | Streamlit UI. Owner defines dimensions and provides 8 examples per class through the interface. SetFit retrains on new examples. Dimension Board, Intent Queue, Analytics views. |
 | Phase 3 | Facebook Integration | Facebook Graph API crawler. Owner provides post URL and access token. Live comments replace synthetic data. All Phase 1+2 functionality applies to real data. |
 
-### 8.1 Phase 1 File Structure
+### 8.1 File Structure
 
 ```
 local-tailor/
-├── run_pipeline.py              ← entry point: load → embed → extract → classify
+├── run_pipeline.py              ← entry point: load → extract → classify → UI
 ├── requirements.txt
-├── config/
-│   └── dimensions.yaml          ← pillow shop dimensions + 8 examples per class
-├── data/
-│   ├── synthetic_comments.json  ← 150-comment dataset with ground truth
-│   ├── embeddings_{id}.npy      ← BERT vectors (N × 384)
-│   └── predictions_{id}.json   ← {comment_id: {dimension: {value, score, flag, span}}}
+├── shops/                       ← one folder per shop (pillow, shoe, ...)
+│   ├── pillow/
+│   │   ├── dimensions.yaml      ← dimension definitions
+│   │   ├── examples.json        ← 8 training examples per class
+│   │   └── synthetic.py         ← synthetic comments + ground truth
+│   └── shoe/
+│       ├── dimensions.yaml
+│       ├── examples.json
+│       └── synthetic.py
+├── data/{SHOP}/                 ← generated outputs scoped per shop
+├── models/{SHOP}/               ← trained SetFit models scoped per shop
 └── localtailor/
-    ├── config.py                ← DimensionConfig dataclass + YAML loader
-    ├── loader.py                ← dataset → comments_clean.json
+    ├── config.py                ← SHOP variable, shop_paths(), DimensionConfig
+    ├── synthetic.py             ← dispatches to shops/{SHOP}/synthetic.py
     ├── embedder.py              ← sentence-transformers encoding
     ├── span_extractor.py        ← roberta-base-squad2 extractive QA
-    └── setfit_trainer.py        ← SetFit training + inference per dimension
+    ├── setfit_trainer.py        ← SetFit training + inference per dimension
+    ├── pipeline.py              ← orchestrates span → classify
+    ├── evaluator.py             ← accuracy vs ground truth
+    ├── reporter.py              ← HTML + PDF report generation
+    └── app.py                   ← Streamlit dashboard (5 views)
 ```
 
 ## 9. What Makes This Stand Out

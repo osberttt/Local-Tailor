@@ -1,12 +1,14 @@
 """
 localtailor/config.py
 =====================
-DimensionConfig dataclass and YAML loader.
-Examples are loaded separately from data/examples.json, not from the YAML.
+DimensionConfig dataclass, YAML loader, and shop switching.
 
-Separation rationale:
-  dimensions.yaml  — structure and descriptions (stable, version-controlled)
-  data/examples.json — training examples (frequently edited, not config)
+Shop data lives in shops/{SHOP}/:
+  shops/{SHOP}/dimensions.yaml  — structure and descriptions
+  shops/{SHOP}/examples.json    — training examples
+
+Change SHOP to switch between shops (e.g. "pillow", "shoe").
+All paths (data, models, config) are scoped by shop automatically.
 """
 
 from __future__ import annotations
@@ -16,6 +18,33 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
+
+
+# ── Active shop ──────────────────────────────────────────────────────────────
+# Change this to switch shops. All paths resolve from this.
+
+SHOP = "pillow"
+
+# ── Shop path resolver ───────────────────────────────────────────────────────
+
+def shop_paths(shop: str | None = None) -> Dict[str, str]:
+    """Return resolved paths for the given shop (defaults to SHOP).
+
+    Returns dict with keys:
+        shop          — shop name
+        dimensions    — path to dimensions.yaml
+        examples      — path to examples.json
+        data_dir      — path to data output directory
+        models_dir    — path to trained models directory
+    """
+    s = shop or SHOP
+    return {
+        "shop": s,
+        "dimensions": f"shops/{s}/dimensions.yaml",
+        "examples": f"shops/{s}/examples.json",
+        "data_dir": f"data/{s}",
+        "models_dir": f"models/{s}",
+    }
 
 
 @dataclass
@@ -53,18 +82,22 @@ class DimensionConfig:
 
 
 def load_dimensions(
-    config_path: str = "config/dimensions.yaml",
-    examples_path: str = "data/examples.json",
+    config_path: str | None = None,
+    examples_path: str | None = None,
 ) -> List[DimensionConfig]:
     """Load dimensions from YAML and inject examples from examples.json.
 
     Args:
-        config_path:   Path to dimensions.yaml (structure + descriptions)
-        examples_path: Path to examples.json (training examples per class)
+        config_path:   Path to dimensions.yaml. Defaults to shops/{SHOP}/dimensions.yaml.
+        examples_path: Path to examples.json. Defaults to shops/{SHOP}/examples.json.
 
     Returns:
         List of DimensionConfig with examples populated.
     """
+    paths = shop_paths()
+    config_path = config_path or paths["dimensions"]
+    examples_path = examples_path or paths["examples"]
+
     # Load YAML structure
     path = Path(config_path)
     if not path.exists():
@@ -133,15 +166,17 @@ def load_dimensions(
         min_ex = d.min_examples_per_class()
         if min_ex < 8:
             print(f"  [config] WARNING: '{d.name}' has only {min_ex} examples/class "
-                  f"(8 recommended). Add more in data/examples.json.")
+                  f"(8 recommended). Add more in {examples_path}.")
 
     return dimensions
 
 
 if __name__ == "__main__":
-    config_path = sys.argv[1] if len(sys.argv) > 1 else "config/dimensions.yaml"
-    dims = load_dimensions(config_path)
-    print(f"\nLoaded {len(dims)} dimension(s):\n")
+    if len(sys.argv) > 1:
+        SHOP = sys.argv[1]
+    dims = load_dimensions()
+    print(f"\nShop: {SHOP}")
+    print(f"Loaded {len(dims)} dimension(s):\n")
     for d in dims:
         print(f"  {d}")
         for v in d.values:
