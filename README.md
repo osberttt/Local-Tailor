@@ -31,10 +31,10 @@ The dashboard opens at **http://localhost:8501** when done.
 Local Tailor supports multiple shops. Each shop has its own dimensions, training examples, and synthetic dataset. Switch between shops by changing one line in `localtailor/config.py`:
 
 ```python
-SHOP = "pillow"   # switch to "shoe", or any shop you create
+SHOP = Shop.PILLOW   # switch to Shop.SHOE, or add your own to the Shop enum
 ```
 
-**Built-in shops**: `pillow` (6 dimensions), `shoe` (7 dimensions)
+**Built-in shops** (defined in `Shop` enum): `pillow` (6 dimensions), `shoe` (7 dimensions)
 
 To create your own shop, see [Creating a New Shop](docs/creating_a_shop.md).
 
@@ -146,7 +146,7 @@ local-tailor/
 ├── templates/
 │   └── report.html                ← Jinja2 HTML report template
 └── localtailor/
-    ├── config.py                  ← SHOP variable, shop_paths(), DimensionConfig loader
+    ├── config.py                  ← Shop enum, SHOP variable, shop_paths(), DimensionConfig loader
     ├── synthetic.py               ← dispatches to shops/{SHOP}/synthetic.py
     ├── embedder.py                ← sentence embeddings utility
     ├── span_extractor.py          ← RoBERTa span extraction

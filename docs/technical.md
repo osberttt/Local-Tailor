@@ -29,7 +29,7 @@ Each shop is a self-contained folder under `shops/`:
 - `examples.json` — training examples (8 per class recommended)
 - `synthetic.py` — synthetic comments with ground truth labels
 
-Switch shops by setting `SHOP` in `localtailor/config.py`. All data, models, and outputs are scoped per shop automatically via `shop_paths()`.
+Switch shops by setting `SHOP` in `localtailor/config.py` (e.g. `SHOP = Shop.PILLOW`). Built-in shops are registered in the `Shop` enum. All data, models, and outputs are scoped per shop automatically via `shop_paths()`.
 
 ## Pipeline Stages
 
@@ -122,13 +122,18 @@ Each comment gets a prediction object per dimension:
 
 ### Shop Selection
 
-Set `SHOP` in `localtailor/config.py` to choose the active shop. The `shop_paths()` function resolves all paths:
+Set `SHOP` in `localtailor/config.py` to choose the active shop. Built-in shops are registered in the `Shop` enum:
 
 ```python
-from localtailor.config import SHOP, shop_paths
+from localtailor.config import Shop, SHOP, shop_paths
 
-paths = shop_paths()       # uses active SHOP
-paths = shop_paths("shoe") # override for a specific shop
+# In config.py:
+SHOP = Shop.PILLOW          # or Shop.SHOE
+
+# At runtime:
+paths = shop_paths()              # uses active SHOP
+paths = shop_paths(Shop.SHOE)     # override for a specific shop
+paths = shop_paths("shoe")        # string also works (Shop extends str)
 # Returns: {shop, dimensions, examples, data_dir, models_dir}
 ```
 
@@ -279,7 +284,7 @@ See [Creating a New Shop](creating_a_shop.md) for how to add a new shop with its
 | File | Purpose |
 |------|---------|
 | `run_pipeline.py` | CLI entry point, orchestrates all steps |
-| `localtailor/config.py` | SHOP variable, shop_paths(), DimensionConfig dataclass, YAML/JSON loader |
+| `localtailor/config.py` | Shop enum, SHOP variable, shop_paths(), DimensionConfig dataclass, YAML/JSON loader |
 | `localtailor/synthetic.py` | Dispatcher — imports and runs `shops/{SHOP}/synthetic.py` |
 | `localtailor/span_extractor.py` | RoBERTa span extraction |
 | `localtailor/setfit_trainer.py` | SetFit training + inference per dimension |

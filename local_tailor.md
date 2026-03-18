@@ -146,13 +146,13 @@ For each comment × dimension pair, the pipeline runs:
 
 ## 4. Demo Flow
 
-Local Tailor supports multiple shops — each with its own dimensions, examples, and synthetic dataset. Switch shops by setting `SHOP` in `localtailor/config.py`. Built-in shops: `pillow` (6 dimensions, 127 comments) and `shoe` (7 dimensions, 116 comments).
+Local Tailor supports multiple shops — each with its own dimensions, examples, and synthetic dataset. Switch shops by setting `SHOP` in `localtailor/config.py` (e.g. `SHOP = Shop.PILLOW`). Built-in shops are registered in the `Shop` enum: `pillow` (6 dimensions, 127 comments) and `shoe` (7 dimensions, 116 comments).
 
 The demo runs on a synthetic shop dataset with ground truth labels. This ensures a reproducible, controlled presentation with measurable results.
 
 ### 4.1 Setup (before presenting)
 
-- Set `SHOP = "pillow"` (or `"shoe"`) in `localtailor/config.py`
+- Set `SHOP = Shop.PILLOW` (or `Shop.SHOE`) in `localtailor/config.py`
 - Run `python run_pipeline.py setup` — this generates synthetic data, trains models, runs predictions, and evaluates
 - Each shop's synthetic dataset includes edge cases: sarcasm, short comments, multilabel, N/A dimensions
 - 8 labeled examples per class provided in `shops/{SHOP}/examples.json`

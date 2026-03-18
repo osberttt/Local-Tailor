@@ -449,12 +449,23 @@ COMMENTS_RAW = [
 - Include edge cases: sarcasm, very short comments, multi-dimension comments, questions
 - Aim for at least 5 comments per value per dimension
 
-## Step 5: Activate the shop
+## Step 5: Register and activate the shop
 
-Edit `localtailor/config.py` and change the `SHOP` variable:
+Edit `localtailor/config.py`:
+
+1. Add your shop to the `Shop` enum:
 
 ```python
-SHOP = "coffee"
+class Shop(str, Enum):
+    PILLOW = "pillow"
+    SHOE   = "shoe"
+    COFFEE = "coffee"   # ← add this
+```
+
+2. Set it as the active shop:
+
+```python
+SHOP = Shop.COFFEE
 ```
 
 ## Step 6: Run the pipeline
@@ -493,7 +504,8 @@ python run_pipeline.py retrain
 - [ ] `shops/{name}/examples.json` has 8 examples per value per dimension
 - [ ] `shops/{name}/synthetic.py` defines `ALL_DIMS` and `COMMENTS_RAW`
 - [ ] `ALL_DIMS` in synthetic.py matches dimension names in dimensions.yaml
-- [ ] `SHOP` in `localtailor/config.py` is set to your shop name
+- [ ] Shop added to `Shop` enum in `localtailor/config.py`
+- [ ] `SHOP` in `localtailor/config.py` is set to your shop
 - [ ] `python run_pipeline.py setup` runs without errors
 
 ## Reference: Built-in Shops

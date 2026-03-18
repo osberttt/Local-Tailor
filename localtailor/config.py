@@ -15,19 +15,27 @@ from __future__ import annotations
 import json
 import sys
 from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
 
 
+# ── Shop registry ────────────────────────────────────────────────────────────
+
+class Shop(str, Enum):
+    """Built-in shops. Add new entries here after creating shops/{name}/."""
+    PILLOW = "pillow"
+    SHOE   = "shoe"
+
 # ── Active shop ──────────────────────────────────────────────────────────────
 # Change this to switch shops. All paths resolve from this.
 
-SHOP = "pillow"
+SHOP = Shop.PILLOW
 
 # ── Shop path resolver ───────────────────────────────────────────────────────
 
-def shop_paths(shop: str | None = None) -> Dict[str, str]:
+def shop_paths(shop: str | Shop | None = None) -> Dict[str, str]:
     """Return resolved paths for the given shop (defaults to SHOP).
 
     Returns dict with keys:
@@ -173,9 +181,10 @@ def load_dimensions(
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        SHOP = sys.argv[1]
+        SHOP = Shop(sys.argv[1])
+    print(f"\nAvailable shops: {', '.join(s.value for s in Shop)}")
     dims = load_dimensions()
-    print(f"\nShop: {SHOP}")
+    print(f"Active shop: {SHOP}")
     print(f"Loaded {len(dims)} dimension(s):\n")
     for d in dims:
         print(f"  {d}")
