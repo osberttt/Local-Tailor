@@ -22,7 +22,7 @@ import time
 from typing import Optional, Tuple
 
 # Confidence below this → treat as N/A (dimension not mentioned)
-THRESHOLD_SPAN = 0.15
+THRESHOLD_SPAN = 0.05
 
 
 class SpanExtractor:

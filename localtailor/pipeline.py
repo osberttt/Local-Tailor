@@ -4,8 +4,14 @@ localtailor/pipeline.py
 Orchestrates the full classification pipeline for a set of comments:
 
   For each comment × dimension:
-    1. SpanExtractor  → extract relevant span (or None → N/A)
-    2. SetFit         → classify span → value + confidence
+    1. SpanExtractor  → try to extract relevant span (used for display)
+    2. SetFit         → classify span (or full comment if no span found)
+    3. Flag decision  → classified | unclear | na
+
+  Span extraction is no longer a hard gate.  If the QA model finds a span,
+  we classify that span.  If not, we classify the full comment text.
+  A comment is only marked N/A when SetFit itself is uncertain on the full
+  comment (clf_score < THRESHOLD_NA_NO_SPAN).
 
 Output: predictions_{post_id}.json
 Schema:
@@ -32,6 +38,10 @@ from typing import Dict, List
 from localtailor.config import DimensionConfig
 from localtailor.span_extractor import SpanExtractor
 from localtailor.setfit_trainer import SetFitDimensionClassifier
+
+# When no span is found, only classify if SetFit is this confident on the full comment.
+# Below this → N/A (dimension genuinely not mentioned).
+THRESHOLD_NA_NO_SPAN = 0.50
 
 
 def run_pipeline(
@@ -62,21 +72,10 @@ def run_pipeline(
     # Load span extractor once (shared across all dims)
     span_extractor = SpanExtractor()
 
-    # Build dim_name → description from value descriptions
-    # Combines all value descriptions into a general dimension description
-    dim_general_desc = {}
-    for d in dimensions:
-        descs = [v.description for v in d.values if v.description]
-        if descs:
-            dim_general_desc[d.name] = "; ".join(descs[:3])
-        else:
-            dim_general_desc[d.name] = d.name.replace("_", " ")
-
     predictions: Dict[str, Dict] = {}
     total_comments = len(comments)
 
     for dim in dimensions:
-        desc = dim_general_desc.get(dim.name, dim.name.replace("_", " "))
         clf = classifiers[dim.name]
 
         print(f"\n  ── Dimension: '{dim.name}' ──────────────────────────────")
@@ -91,23 +90,28 @@ def run_pipeline(
 
             text = comment["message"]
 
-            # Step 1: Extract span
-            span, span_score = span_extractor.extract(text, dim.name, desc)
+            # Step 1: Try to extract a relevant span (for display).
+            # Use only the dimension name — long descriptions confuse the QA model.
+            span, span_score = span_extractor.extract(text, dim.name)
 
-            if span is None:
-                # Dimension not mentioned in this comment
+            # Step 2: Classify.
+            # Use the extracted span when available; fall back to the full comment.
+            classify_text = span if span is not None else text
+            value, clf_score, flag = clf.predict(classify_text)
+
+            # Step 3: Determine flag.
+            # If no span was found, require higher SetFit confidence to call it
+            # classified/unclear — otherwise the dimension is not mentioned (N/A).
+            if span is None and clf_score < THRESHOLD_NA_NO_SPAN:
                 predictions[cid][dim.name] = {
                     "value": "N/A",
                     "flag": "na",
-                    "score": round(span_score, 4),
+                    "score": round(clf_score, 4),
                     "span": None,
                     "span_score": round(span_score, 4),
                 }
                 stats["na"] += 1
                 continue
-
-            # Step 2: Classify span
-            value, clf_score, flag = clf.predict(span)
 
             predictions[cid][dim.name] = {
                 "value": value,
