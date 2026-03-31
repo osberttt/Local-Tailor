@@ -1,0 +1,96 @@
+# Local Tailor — Nike Shop Dimension Configuration
+# ==================================================
+# Defines WHAT dimensions exist and WHAT each value means.
+# Training examples live separately in shops/nike/examples.json
+#
+# To add a dimension: add a block here, then add examples to examples.json
+# To retrain: edit examples then run: python run_pipeline.py retrain
+
+dimensions:
+
+  # ── Fit / Sizing ─────────────────────────────────────────────────────────────
+  - name: fit
+    enabled: true
+    values:
+      - label: "runs small"
+        description: "The shoe fits smaller than expected, reviewer had to size up"
+      - label: "true to size"
+        description: "The shoe fits as expected for the stated size"
+      - label: "runs large"
+        description: "The shoe fits larger than expected, reviewer could have sized down"
+
+  # ── Comfort ──────────────────────────────────────────────────────────────────
+  - name: comfort
+    enabled: true
+    values:
+      - label: "very comfortable"
+        description: "Great cushioning, support, and overall foot comfort, can wear all day"
+      - label: "average comfort"
+        description: "Acceptable comfort, nothing special or noteworthy"
+      - label: "uncomfortable"
+        description: "Causes pain, blisters, soreness, or foot fatigue"
+
+  # ── Style & Appearance ───────────────────────────────────────────────────────
+  - name: style
+    enabled: true
+    values:
+      - label: "looks great"
+        description: "Attractive colorway, clean design, gets compliments, stylish"
+      - label: "looks different from photos"
+        description: "Appearance or colorway differs from product images or expectations"
+      - label: "looks cheap"
+        description: "Low-quality finish, cheap materials visible, poor aesthetic"
+
+  # ── Durability ───────────────────────────────────────────────────────────────
+  - name: durability
+    enabled: true
+    values:
+      - label: "lasts well"
+        description: "The shoe holds up well over time, durable construction and materials"
+      - label: "wears out fast"
+        description: "Sole, stitching, or upper material deteriorates quickly"
+      - label: "too early to tell"
+        description: "Shoe is new, not enough time to judge longevity"
+
+  # ── Price & Value ────────────────────────────────────────────────────────────
+  - name: price_value
+    enabled: true
+    values:
+      - label: "too expensive"
+        description: "Shoe is overpriced or not worth the retail cost"
+      - label: "good value"
+        description: "Reasonable price for the quality and style received"
+      - label: "worth it"
+        description: "Excellent value, quality justifies the price paid"
+
+  # ── Intent ───────────────────────────────────────────────────────────────────
+  - name: intent
+    enabled: true
+    values:
+      - label: "needs reply"
+        description: "Comment contains a direct question awaiting an answer"
+      - label: "positive review"
+        description: "Compliment, recommendation, or positive experience shared"
+      - label: "negative review"
+        description: "Complaint, warning to others, or negative experience shared"
+      - label: "comparison"
+        description: "Comment compares this shoe to another Nike model or brand"
+      - label: "monitor"
+        description: "Discussion or general conversation worth watching"
+      - label: "spam"
+        description: "Off-topic, promotional, or unrelated comment"
+
+  # ── Tone ─────────────────────────────────────────────────────────────────────
+  - name: tone
+    enabled: true
+    values:
+      - label: "happy"
+        description: "Enthusiastic, delighted, or clearly satisfied"
+      - label: "curious"
+        description: "Asking questions, wondering, or expressing uncertainty"
+      - label: "disappointed"
+        description: "Let down, expected better, or quietly dissatisfied"
+      - label: "angry"
+        description: "Frustrated, upset, or strongly negative in tone"
+      - label: "neutral"
+        description: "Factual, informational, or no strong emotional tone"

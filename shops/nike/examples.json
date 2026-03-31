@@ -1,0 +1,286 @@
+{
+  "_readme": "Training examples for SetFit classifiers. Edit these and run: python run_pipeline.py retrain",
+  "_format": "{ dimension_name: { value_label: [ example1, example2, ... ] } }",
+  "_recommended_per_class": 8,
+
+  "fit": {
+    "runs small": [
+      "ordered my usual size and they were way too tight, had to size up",
+      "runs small, definitely go half a size up",
+      "very narrow fit, my usual size felt like a size down",
+      "toes were crushed even in my normal size, sizing is off",
+      "too snug right out of the box, should have ordered larger",
+      "tight across the top of my foot in my regular size",
+      "runs small compared to other Nikes I own",
+      "had to exchange for a bigger size, they run small"
+    ],
+    "true to size": [
+      "fits perfectly in my usual size",
+      "ordered my normal size and they fit like a glove",
+      "true to size, no need to size up or down",
+      "sizing is accurate, fits exactly as expected",
+      "bought my usual and they fit great right away",
+      "consistent with other Jordans I own, fits true",
+      "ordered my regular size and they are perfect",
+      "fits just right, the size chart was accurate"
+    ],
+    "runs large": [
+      "runs big, order a size down",
+      "too big in my normal size, went back for a half size smaller",
+      "way too roomy, should have sized down",
+      "ordered my usual and they are too large, heel slips",
+      "runs large compared to other Nike shoes, size down",
+      "foot slides around inside, went a full size too big",
+      "generous sizing, could easily go down half a size",
+      "big fit, i normally wear a 9 and the 9 was like a 10"
+    ]
+  },
+
+  "comfort": {
+    "very comfortable": [
+      "so comfortable, could wear them all day without any issues",
+      "great cushioning, my feet feel amazing in these",
+      "the most comfortable Jordans I have ever worn",
+      "incredibly comfortable right out of the box",
+      "worn them all day and my feet are not tired at all",
+      "super comfortable, the cushioning is excellent",
+      "very comfortable and supportive, great for all-day wear",
+      "feels great on my feet, no break-in period needed"
+    ],
+    "average comfort": [
+      "comfortable enough but nothing special",
+      "decent comfort for everyday wear, no major complaints",
+      "okay comfort, not the most cushioned but acceptable",
+      "average comfort, fine for short periods",
+      "not the most comfortable shoe I own but it does the job",
+      "comfort is fine, nothing exceptional",
+      "wearable and comfortable enough for casual use",
+      "fair comfort, about what you expect at this price"
+    ],
+    "uncomfortable": [
+      "hurts my feet after an hour, very uncomfortable",
+      "caused blisters on the first wear",
+      "no cushioning whatsoever, very uncomfortable on hard floors",
+      "my feet were aching after just a short walk",
+      "the insole is flat and provides zero support",
+      "uncomfortable, the heel rubs and causes pain",
+      "hard and stiff, needs serious break-in or insoles",
+      "painful to wear, would not recommend for long periods"
+    ]
+  },
+
+  "style": {
+    "looks great": [
+      "the colorway is fire, so many compliments already",
+      "beautiful shoe, the design is clean and stylish",
+      "stunning colorway, looks even better in person",
+      "love the look, very clean and fresh aesthetic",
+      "the color blocking is on point, great looking shoe",
+      "very stylish, matches everything and turns heads",
+      "gorgeous colorway, best looking shoes I own",
+      "the design is amazing, looks great with any outfit"
+    ],
+    "looks different from photos": [
+      "the color looks completely different from the product photos",
+      "not what I expected, looks different in person",
+      "the shade is off compared to the online images",
+      "disappointed with the colorway, not as pictured",
+      "the color is darker in person than in the photos",
+      "materials look cheaper in real life than online",
+      "the finish looks different from the advertising photos",
+      "not the colorway I expected based on the product listing"
+    ],
+    "looks cheap": [
+      "the finish looks low-quality and cheap up close",
+      "materials feel and look cheap for the price",
+      "poor quality finish, looks nothing like a premium Nike",
+      "the stitching looks sloppy and cheap",
+      "cheap-looking materials, not what I expect from Nike",
+      "the sole looks flimsy and cheap",
+      "low quality finish, looks like a knockoff",
+      "very cheap aesthetic, not worth the price at all"
+    ]
+  },
+
+  "durability": {
+    "lasts well": [
+      "worn them for months and they still look brand new",
+      "very durable, holds up well after heavy use",
+      "excellent construction, no signs of wear after daily use",
+      "the sole is still intact after six months of use",
+      "quality is exceptional, holding up great over time",
+      "still looking fresh after dozens of wears",
+      "very well-made shoe, durability is impressive",
+      "wears well and keeps its shape, great durability"
+    ],
+    "wears out fast": [
+      "sole started separating after just two months",
+      "stitching came apart very quickly, poor durability",
+      "the outsole wore down fast with regular use",
+      "fell apart after a few months, terrible quality",
+      "the midsole compressed quickly and now they are flat",
+      "creases badly and the leather cracked within weeks",
+      "wearing out much faster than expected for a Nike",
+      "very poor durability, not built to last"
+    ],
+    "too early to tell": [
+      "just got them, looks good but need more time to judge",
+      "only worn them twice, too soon to say about durability",
+      "brand new, first impressions are good but will see",
+      "just received them, quality seems fine so far",
+      "only had them a few days, will update after more use",
+      "too new to comment on how well they hold up",
+      "first wear was great, will see how they last over time",
+      "need a few more weeks before i can judge durability"
+    ]
+  },
+
+  "price_value": {
+    "too expensive": [
+      "overpriced for what you actually get",
+      "not worth the retail price, too expensive",
+      "can get similar quality for much less elsewhere",
+      "the price is too high given the quality",
+      "way too expensive for a shoe this basic",
+      "premium price but average quality, not worth it",
+      "not worth what Nike charges for these",
+      "too much money for what amounts to a standard shoe"
+    ],
+    "good value": [
+      "reasonable price for the quality you get",
+      "good value for money, happy with the purchase",
+      "fair price, no complaints given what you receive",
+      "solid value at the retail price",
+      "priced appropriately for the quality",
+      "worth the price, good quality for the cost",
+      "good deal, quality matches the price",
+      "reasonable cost for a well-made Nike"
+    ],
+    "worth it": [
+      "absolutely worth every dollar, incredible shoe",
+      "worth every penny, could not be happier",
+      "expensive but completely worth it for the quality",
+      "yes they are pricey but the quality is outstanding",
+      "splurged and zero regrets, worth the investment",
+      "the quality justifies the price completely",
+      "best money I have spent on shoes in years",
+      "totally worth it, premium shoe at a fair price"
+    ]
+  },
+
+  "intent": {
+    "needs reply": [
+      "do these run true to size or should I size up?",
+      "are these available in wide width?",
+      "what is the return policy on sale shoes?",
+      "how does the sizing compare to Air Force 1s?",
+      "are these good for people with wide feet?",
+      "can these be used for light running or just casual?",
+      "do they restock sold-out colorways often?",
+      "is the sole replaceable or is this a lifestyle-only shoe?"
+    ],
+    "positive review": [
+      "absolutely love these shoes, highly recommend",
+      "best Jordans I have ever owned, perfect in every way",
+      "amazing shoe, the quality and look are incredible",
+      "could not be happier, these exceeded expectations",
+      "fantastic purchase, would buy again immediately",
+      "love everything about these shoes, great buy",
+      "outstanding shoe, will definitely buy more colorways",
+      "so happy with this purchase, perfect all-around"
+    ],
+    "negative review": [
+      "very disappointed, not worth the money",
+      "would not recommend, terrible quality",
+      "returning these immediately, awful shoe",
+      "complete waste of money, very poor quality",
+      "do not buy these, they fall apart quickly",
+      "worst Nikes I have ever owned",
+      "stay away, the quality is unacceptable for the price",
+      "deeply disappointed, expected much better from Nike"
+    ],
+    "comparison": [
+      "much more comfortable than the Air Force 1s I had before",
+      "better quality than the Dunks I own",
+      "not as comfortable as the high-top version",
+      "these fit differently from my other Jordans",
+      "similar feel to the Air Force 1 but more stylish",
+      "better colorway than last year's version",
+      "comparing to Dunks, these have better cushioning",
+      "not as durable as the older Nike models I own"
+    ],
+    "monitor": [
+      "just got them, will update after a few weeks",
+      "worn them once, seems okay so far",
+      "still deciding if i will keep them",
+      "interesting colorway, not sure if it will grow on me",
+      "the shoe arrived as described, nothing unusual",
+      "decent shoe, no strong feelings at this stage",
+      "reserving judgment until i have worn them more",
+      "looks and feels fine, will see how it holds up"
+    ],
+    "spam": [
+      "check out my store for the same shoes at lower prices",
+      "visit our website for great deals on Nikes",
+      "follow us for the best sneaker deals online",
+      "dm me for replica Jordans at a fraction of the price",
+      "we sell this exact shoe for less on our site",
+      "click the link in my bio for sneaker discounts",
+      "great post! also check out my sneaker shop",
+      "our site has the same colorway for 50% off today"
+    ]
+  },
+
+  "tone": {
+    "happy": [
+      "absolutely love these, so happy with my purchase",
+      "thrilled with how they look and feel",
+      "ecstatic about this buy, best shoes ever",
+      "so excited, these are everything I hoped for",
+      "genuinely over the moon with these shoes",
+      "could not be more delighted, love them",
+      "so pleased, these are perfect in every way",
+      "love love love these shoes"
+    ],
+    "curious": [
+      "not sure if I should have sized up",
+      "wondering how the color holds up over time",
+      "curious to see how comfortable they are after break-in",
+      "not certain if these will work for wide feet",
+      "wondering if the sole will hold up for daily wear",
+      "unsure about the sizing, anyone with wide feet tried these?",
+      "not sure if the colorway looks as good in person",
+      "curious whether these are better than the highs"
+    ],
+    "disappointed": [
+      "really let down by these, expected more from Nike",
+      "disappointed with the quality for the price",
+      "not what i hoped for, sadly returning",
+      "expected better, quite underwhelmed",
+      "a little let down if i am honest",
+      "sadly disappointed, had high hopes",
+      "not as good as expected, disappointed",
+      "let down by the fit and quality"
+    ],
+    "angry": [
+      "absolutely furious, this is not acceptable from Nike",
+      "outrageous quality for this price point",
+      "this is a complete disgrace, demanding a refund",
+      "so angry, these fell apart after two weeks",
+      "infuriated by the quality, total waste of money",
+      "appalling build quality, Nike should be ashamed",
+      "this is a scam, not worth a fraction of the price",
+      "disgusted with this purchase, never buying Nike again"
+    ],
+    "neutral": [
+      "the shoe arrived on time and fits as described",
+      "standard quality, does what it is supposed to",
+      "decent shoe, no strong feelings either way",
+      "nothing particularly exciting, but it works",
+      "meets basic expectations, nothing more",
+      "the shoe is fine, straightforward and functional",
+      "fits and looks as expected, nothing unusual",
+      "functional sneaker, no complaints or praise"
+    ]
+  }
+}
