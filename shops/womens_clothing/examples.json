@@ -3,16 +3,16 @@
   "_format": "{ dimension_name: { value_label: [ example1, example2, ... ] } }",
   "_recommended_per_class": 8,
 
-  "sizing": {
+  "fit_sizing": {
     "runs small": [
-      "ordered my usual size and it was way too tight, had to size up",
       "runs very small, go at least one size up from what you normally wear",
       "the medium fit like a small, definitely size up",
       "much smaller than expected, could not zip it up in my normal size",
       "i'm usually a 6 and had to get an 8, it runs very small",
       "tight across the chest even though i ordered my regular size",
       "snug everywhere, wish i had ordered larger",
-      "petite sizing was still too small for my frame, size up"
+      "petite sizing was still too small for my frame",
+      "ordered my usual size and it was way too tight"
     ],
     "true to size": [
       "fits perfectly in my usual size",
@@ -20,267 +20,118 @@
       "true to size, no need to go up or down",
       "sizing is accurate, fits just right",
       "bought my usual medium and it fits great",
-      "size chart is correct, fits as described",
       "fits exactly like the measurements said it would",
-      "consistent with other items from this brand, true to size"
+      "consistent with other items from this brand",
+      "size chart is correct"
     ],
     "runs large": [
       "way too big, could have easily sized down",
       "fits large, i am swimming in the small",
-      "ordered a small and it was very roomy, runs large",
+      "ordered a small and it was very roomy",
       "too loose everywhere, should have gone down a size",
-      "the xs fits me like a medium, definitely runs very large",
-      "baggy and oversized even in the smallest available size",
-      "hung off me like a tent, runs large for sure",
-      "i usually wear a medium but the small would have fit better"
+      "the xs fits me like a medium",
+      "baggy and oversized even in the smallest size",
+      "hung off me like a tent",
+      "i usually wear a medium but this was too big"
     ]
   },
 
-  "material": {
-    "great quality": [
+  "material_quality": {
+    "high quality": [
       "the fabric is beautiful, thick and well-made",
       "excellent construction, seams are clean and sturdy",
-      "fabric feels luxurious and holds its shape perfectly",
-      "beautifully lined and well-constructed garment",
-      "premium feel to the material, very impressed with quality",
-      "washes well and keeps its shape, great quality",
-      "the stitching is excellent and the fabric drapes beautifully",
-      "high-quality material that does not pill or fade"
+      "fabric feels luxurious and holds its shape",
+      "premium feel to the material",
+      "washes well and keeps its shape",
+      "the stitching is excellent",
+      "high-quality material that does not pill",
+      "very well made and durable"
     ],
-    "poor quality": [
-      "the fabric feels cheap and thin, very disappointing",
-      "fabric is scratchy and uncomfortable against the skin",
-      "poorly constructed, seams came apart after one wash",
-      "material looks cheap and feels even cheaper",
-      "thin fabric you can see straight through, poorly made",
-      "the stitching is already unraveling after a few wears",
-      "fabric pills after just one wash, terrible quality",
-      "feels like it will fall apart very soon, cheap construction"
+    "low quality": [
+      "the fabric feels cheap and thin",
+      "scratchy and uncomfortable material",
+      "poorly constructed, seams came apart",
+      "material looks cheap and feels cheap",
+      "thin fabric, poorly made",
+      "stitching is unraveling",
+      "fabric pills after one wash",
+      "feels like it will fall apart soon"
     ],
-    "too early to tell": [
-      "just received it, seems nice but need more time to judge quality",
-      "only worn it once, too soon to say how it will hold up",
-      "first wear was good, will update after a few washes",
-      "brand new, looks and feels fine so far",
-      "need to wash it a few times before i can comment on durability",
-      "just arrived today, initial impression is good but time will tell",
-      "worn once, seems okay but i will update this review later",
-      "only had it a few days, quality seems fine so far"
+    "uncertain": [
+      "just received it, seems nice but need more time",
+      "only worn once, too soon to tell",
+      "need more wears before judging quality",
+      "brand new, looks fine so far",
+      "will update after a few washes",
+      "initial impression is good",
+      "too early to evaluate durability",
+      "just arrived today"
     ]
   },
 
-  "style": {
+  "style_appearance": {
     "flattering": [
-      "so flattering on my figure, gets so many compliments",
-      "the cut is incredibly flattering, makes me look great",
-      "enhances my shape beautifully, very flattering silhouette",
-      "i feel amazing in this, very flattering for my body type",
-      "the drape and cut are extremely flattering",
-      "fits and flatters perfectly, exactly what i was hoping for",
-      "makes me look and feel great, very flattering on",
-      "the style is very flattering and i love how it looks"
+      "so flattering on my figure",
+      "makes me look great",
+      "enhances my shape beautifully",
+      "very flattering silhouette",
+      "fits and flatters perfectly",
+      "i feel amazing in this",
+      "very flattering overall",
+      "love how it looks on me"
     ],
     "unflattering": [
-      "does not flatter my body type at all",
-      "the cut is not flattering, makes me look boxy",
-      "overwhelmed my small frame, very unflattering",
-      "the waist hits in all the wrong places for my shape",
-      "not a flattering look on me at all, very boxy cut",
-      "the proportions are off and it does nothing for my figure",
-      "made me look short and squat, not a good silhouette",
-      "the style is just not flattering for my body shape"
+      "does not flatter my body type",
+      "makes me look boxy",
+      "not a flattering look",
+      "the cut is unflattering",
+      "proportions are off",
+      "not good for my shape",
+      "made me look bulky",
+      "just not flattering at all"
     ],
-    "looks different from photos": [
-      "looks nothing like the photo, very disappointed",
-      "the color is completely different from what was pictured",
-      "not at all what it looks like online, very misleading photos",
-      "much thinner material than the photos suggested",
-      "the print looks different in person than in the product image",
-      "the style in person is nothing like the online description",
-      "photos were flattering but the actual item is not the same",
-      "not what i expected based on the listing, quite different in person"
+    "different from expectations": [
+      "looks nothing like the photo",
+      "color is completely different",
+      "not what i expected at all",
+      "material is different than expected",
+      "looks different in person",
+      "not like the online image",
+      "misleading photos",
+      "very different from listing"
     ]
   },
 
-  "comfort": {
+  "comfort_wearability": {
     "very comfortable": [
-      "so comfortable i wear it all day without any issues",
-      "incredibly soft against the skin, love how it feels",
-      "the most comfortable piece i own, wear it constantly",
-      "super cozy and comfortable, feels amazing on",
-      "comfortable enough to wear all day long",
-      "so soft and comfortable, like wearing a second skin",
-      "very comfortable and easy to move in",
-      "the fabric is so soft, extremely comfortable to wear"
+      "so comfortable i wear it all day",
+      "incredibly soft on the skin",
+      "extremely comfortable",
+      "feels amazing to wear",
+      "very easy to move in",
+      "super comfortable fabric",
+      "soft and pleasant to wear",
+      "comfortable for long wear"
     ],
-    "average comfort": [
-      "comfortable enough but nothing special",
-      "decent comfort, no major complaints",
-      "ok to wear, not particularly comfortable or uncomfortable",
-      "it is comfortable but not outstandingly so",
-      "wearable and comfortable enough for everyday use",
-      "fine to wear, comfort is acceptable",
-      "not the most comfortable but not bad either",
-      "reasonable comfort for the type of garment"
+    "moderately comfortable": [
+      "comfortable enough",
+      "decent comfort overall",
+      "nothing special but wearable",
+      "fine to wear",
+      "acceptable comfort",
+      "not uncomfortable",
+      "reasonable comfort",
+      "okay for daily use"
     ],
     "uncomfortable": [
-      "itchy fabric drives me crazy after an hour",
-      "too tight and restrictive, very uncomfortable to move in",
-      "the material irritates my skin, cannot wear for long",
-      "digs in uncomfortably at the waist all day",
-      "the lining is scratchy and makes it very uncomfortable",
-      "can barely move in it, very restrictive and uncomfortable",
-      "uncomfortable to wear, the seams rub and irritate",
-      "the fabric is stiff and makes it very unpleasant to wear"
-    ]
-  },
-
-  "price_value": {
-    "too expensive": [
-      "overpriced for what you actually get",
-      "not worth the price at all, very disappointing for the cost",
-      "way too expensive for such poor quality",
-      "i expected much better quality for this price point",
-      "can get the same thing elsewhere for a fraction of the cost",
-      "premium price but definitely not premium quality",
-      "not worth paying this much for something so average",
-      "the price is not justified given what you actually receive"
-    ],
-    "good value": [
-      "reasonable price for the quality received",
-      "fair price for what you get, no complaints",
-      "good value for money, happy with the purchase",
-      "the price is appropriate for the quality",
-      "decently priced, worth buying",
-      "solid value at this price point",
-      "priced well for the quality and style",
-      "good deal for what you get"
-    ],
-    "worth it": [
-      "absolutely worth every penny, could not be happier",
-      "splurged on this and it is completely worth it",
-      "yes it is pricey but the quality is outstanding, worth it",
-      "worth every cent, best purchase i have made",
-      "the quality justifies the higher price completely",
-      "expensive but you get exactly what you pay for",
-      "totally worth the investment, exceptional quality",
-      "paid more than usual but no regrets at all"
-    ]
-  },
-
-  "intent": {
-    "needs reply": [
-      "does this come in a petite size?",
-      "is this available in plus sizes?",
-      "what is the return policy for sale items?",
-      "can you tell me what the fabric content is?",
-      "does this run true to size or should i size up?",
-      "is this item available in other colors?",
-      "how does this wash? can it go in the dryer?",
-      "would this work for a formal occasion?"
-    ],
-    "positive review": [
-      "absolutely love this item, highly recommend",
-      "this is my favorite purchase, buy it now",
-      "amazing quality and fit, very happy with this",
-      "could not be more pleased, wonderful item",
-      "this exceeded all my expectations",
-      "bought two because i love it so much",
-      "wonderful piece, fits beautifully and looks great",
-      "so happy with this purchase, will definitely buy again"
-    ],
-    "negative review": [
-      "very disappointed, not worth the money at all",
-      "would not recommend this to anyone",
-      "returning this immediately, very poor quality",
-      "terrible purchase, falls apart after one wash",
-      "stay away from this item, complete waste of money",
-      "the worst quality i have ever bought from this brand",
-      "do not buy this, looks nothing like the photos",
-      "extremely disappointed, this is not what was described"
-    ],
-    "comparison": [
-      "much better than the similar one i bought last year",
-      "not as good as the version they used to sell",
-      "similar style to another brand but much better quality",
-      "compared to other brands, this is a great deal",
-      "reminds me of a designer piece i own but at a fraction of the price",
-      "better than the one i returned last month",
-      "this brand's quality used to be better than this",
-      "compared this with a similar item and this one wins"
-    ],
-    "monitor": [
-      "worn it once, seems okay so far",
-      "just received, will update after a few wears",
-      "interesting piece, not sure how it will hold up",
-      "the item arrived as described, nothing unusual to note",
-      "still deciding whether i will keep it or return it",
-      "nice piece, curious to see how it looks after washing",
-      "looks good in person, reserving full judgment for later",
-      "decent item, no strong feelings either way at this point"
-    ],
-    "spam": [
-      "check out our shop for similar styles at better prices",
-      "visit our website for great deals on women's fashion",
-      "follow us for the best fashion deals and discounts",
-      "great post! also check out my store for similar items",
-      "we have the same item for less on our website",
-      "click the link in my bio for fashion deals",
-      "dm me for discount codes on women's clothing",
-      "our shop has this style for 50% off this weekend"
-    ]
-  },
-
-  "tone": {
-    "happy": [
-      "absolutely love this, so happy with my purchase",
-      "thrilled with how this turned out",
-      "delighted with this item, could not be happier",
-      "so excited about this purchase, love it",
-      "genuinely over the moon with how this fits",
-      "ecstatic about this buy, will definitely get more",
-      "so pleased with this, it made my day",
-      "love, love, love this item"
-    ],
-    "curious": [
-      "wondering if this would work for a petite frame",
-      "not sure if i should size up or stay with my usual size",
-      "curious whether it will hold up after many washes",
-      "not certain if the color will suit me",
-      "wondering how it will look on someone with a different body type",
-      "interested to see how it wears over time",
-      "unsure about the sizing, anyone with similar stats tried this?",
-      "not sure if this is the right choice for my body shape"
-    ],
-    "disappointed": [
-      "really let down by this, expected so much better",
-      "disappointed with the quality for the price",
-      "not what i hoped for, sadly returning",
-      "expected better from this brand, quite let down",
-      "underwhelmed by the quality and fit",
-      "sadly disappointed, had high hopes for this",
-      "a little let down if i am honest, expected more",
-      "disappointed that it looks nothing like the photos"
-    ],
-    "angry": [
-      "absolutely furious with this purchase",
-      "this is a complete disgrace, terrible quality",
-      "outraged at how poor this product is",
-      "totally unacceptable, demanding a full refund",
-      "i am so angry, this is not what was advertised at all",
-      "infuriated by the quality and misleading photos",
-      "this is a scam, nothing like the description",
-      "appalling quality, this is a complete rip-off"
-    ],
-    "neutral": [
-      "the item arrived as described, no issues",
-      "standard quality, does what it is supposed to do",
-      "nothing particularly exciting, but it works",
-      "decent item overall, no strong feelings",
-      "fabric is as listed, fits as expected",
-      "the item is fine, nothing special to report",
-      "met my expectations, neither impressed nor disappointed",
-      "functional piece, straightforward to wear"
+      "very uncomfortable to wear",
+      "itchy and irritating",
+      "too tight and restrictive",
+      "uncomfortable fabric",
+      "digs into the skin",
+      "hard to move in",
+      "scratchy material",
+      "not comfortable at all"
     ]
   }
 }

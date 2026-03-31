@@ -1,96 +1,89 @@
-# Local Tailor — Women's Clothing Shop Dimension Configuration
-# =============================================================
-# Defines WHAT dimensions exist and WHAT each value means.
-# Training examples live separately in shops/womens_clothing/examples.json
-#
-# To add a dimension: add a block here, then add examples to examples.json
-# To retrain: edit examples then run: python run_pipeline.py retrain
+# Local Tailor — Dimension Configuration
+# ========================================
+# Women Clothing Shop Dimensions
 
 dimensions:
 
-  # ── Sizing Accuracy ──────────────────────────────────────────────────────────
-  - name: sizing
+  # ── Fit & Sizing ──────────────────────────────────────────────────────────
+  - name: fit_sizing
     enabled: true
     values:
-      - label: "runs small"
-        description: "The item fits smaller than expected, reviewer had to size up"
-      - label: "true to size"
-        description: "The item fits as expected for the stated size"
-      - label: "runs large"
-        description: "The item fits larger than expected, reviewer could have sized down"
+      - label: "too small"
+        description: "The clothing item runs small or is too tight"
+      - label: "just right"
+        description: "The size fits perfectly and matches expectations"
+      - label: "too large"
+        description: "The clothing item runs large or is too loose"
+      - label: "inconsistent sizing"
+        description: "Sizing varies or is unpredictable across items or body types"
 
-  # ── Material & Build Quality ─────────────────────────────────────────────────
-  - name: material
+  # ── Material & Quality ────────────────────────────────────────────────────
+  - name: material_quality
     enabled: true
     values:
-      - label: "great quality"
-        description: "Fabric feels premium, well-made, durable construction, holds up well"
       - label: "poor quality"
-        description: "Fabric feels cheap, thin, itchy, or poorly constructed"
-      - label: "too early to tell"
-        description: "Item is new, not enough use to judge quality or durability"
+        description: "Cheap fabric, weak stitching, or low durability"
+      - label: "average quality"
+        description: "Acceptable quality but not exceptional"
+      - label: "high quality"
+        description: "Good fabric, strong stitching, premium feel"
+      - label: "material issues"
+        description: "Problems like cheap look, print vs expected material, or fabric defects"
 
-  # ── Style & Appearance ───────────────────────────────────────────────────────
-  - name: style
+  # ── Style & Appearance ────────────────────────────────────────────────────
+  - name: style_appearance
     enabled: true
     values:
+      - label: "not flattering"
+        description: "Does not look good on the wearer or body type"
+      - label: "neutral style"
+        description: "Average or simple appearance"
       - label: "flattering"
-        description: "Item looks great on the body, compliments received, enhances appearance"
-      - label: "unflattering"
-        description: "Item does not suit the reviewer's body type or shape"
-      - label: "looks different from photos"
-        description: "Item appearance differs from product images or description"
+        description: "Enhances appearance and looks good"
+      - label: "very stylish"
+        description: "Trendy, unique, or highly attractive design"
 
-  # ── Comfort ──────────────────────────────────────────────────────────────────
-  - name: comfort
+  # ── Comfort & Wearability ──────────────────────────────────────────────────
+  - name: comfort_wearability
     enabled: true
     values:
-      - label: "very comfortable"
-        description: "Soft, pleasant to wear all day, no irritation or restriction"
-      - label: "average comfort"
-        description: "Acceptable comfort, nothing exceptional or problematic"
       - label: "uncomfortable"
-        description: "Causes irritation, feels stiff, restricts movement, or unpleasant to wear"
+        description: "Too tight, awkward fit, or difficult to wear"
+      - label: "moderately comfortable"
+        description: "Acceptable comfort but not perfect"
+      - label: "very comfortable"
+        description: "Soft, easy to wear, and pleasant"
+      - label: "wearability issues"
+        description: "Functional problems like zipper issues, difficult wear, or restrictive design"
 
-  # ── Price & Value ────────────────────────────────────────────────────────────
-  - name: price_value
-    enabled: true
-    values:
-      - label: "too expensive"
-        description: "Item is overpriced or not worth the cost given quality"
-      - label: "good value"
-        description: "Reasonable price for the quality and style received"
-      - label: "worth it"
-        description: "Excellent value, high quality justifies the price paid"
-
-  # ── Intent ───────────────────────────────────────────────────────────────────
+  # ── Intent ────────────────────────────────────────────────────────────────
   - name: intent
     enabled: true
     values:
       - label: "needs reply"
-        description: "Comment contains a direct question awaiting an answer"
+        description: "Comment contains a direct question"
       - label: "positive review"
-        description: "Compliment, recommendation, or positive experience shared"
+        description: "Positive feedback or praise"
       - label: "negative review"
-        description: "Complaint, warning to others, or negative experience shared"
+        description: "Complaint or dissatisfaction"
       - label: "comparison"
-        description: "Comment compares this item to another brand or product"
+        description: "Compares with another product"
       - label: "monitor"
-        description: "Discussion or general conversation worth watching"
+        description: "General discussion"
       - label: "spam"
-        description: "Off-topic, promotional, or unrelated comment"
+        description: "Irrelevant or promotional content"
 
-  # ── Tone ─────────────────────────────────────────────────────────────────────
+  # ── Tone ───────────────────────────────────────────────────────────────────
   - name: tone
     enabled: true
     values:
       - label: "happy"
-        description: "Enthusiastic, delighted, or clearly satisfied"
+        description: "Excited or satisfied"
       - label: "curious"
-        description: "Asking questions, wondering, or expressing uncertainty"
+        description: "Asking questions or unsure"
       - label: "disappointed"
-        description: "Let down, expected better, or quietly dissatisfied"
+        description: "Let down or expected better"
       - label: "angry"
-        description: "Frustrated, upset, or strongly negative in tone"
+        description: "Strong negative emotion"
       - label: "neutral"
-        description: "Factual, informational, or no strong emotional tone"
+        description: "No strong emotion"
