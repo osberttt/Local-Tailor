@@ -36,7 +36,7 @@ class Shop(str, Enum):
 # ── Active shop ──────────────────────────────────────────────────────────────
 # Change this to switch shops. All paths resolve from this.
 
-SHOP = Shop.PILLOW
+SHOP = Shop.NIKE
 
 # ── Shop path resolver ───────────────────────────────────────────────────────
 

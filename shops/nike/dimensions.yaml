@@ -1,96 +1,81 @@
-# Local Tailor — Nike Shop Dimension Configuration
-# ==================================================
-# Defines WHAT dimensions exist and WHAT each value means.
-# Training examples live separately in shops/nike/examples.json
-#
-# To add a dimension: add a block here, then add examples to examples.json
-# To retrain: edit examples then run: python run_pipeline.py retrain
-
 dimensions:
 
-  # ── Fit / Sizing ─────────────────────────────────────────────────────────────
   - name: fit
     enabled: true
     values:
       - label: "runs small"
-        description: "The shoe fits smaller than expected, reviewer had to size up"
+        description: "Comments saying the shoe feels tight, narrow, short, snug, restrictive, or smaller than expected, including suggestions to size up"
       - label: "true to size"
-        description: "The shoe fits as expected for the stated size"
+        description: "Comments saying the shoe fits normally, fits as expected, fits fine, or does not need sizing changes"
       - label: "runs large"
-        description: "The shoe fits larger than expected, reviewer could have sized down"
+        description: "Comments saying the shoe feels loose, roomy, long, wide, big, or larger than expected, including suggestions to size down"
 
-  # ── Comfort ──────────────────────────────────────────────────────────────────
   - name: comfort
     enabled: true
     values:
       - label: "very comfortable"
-        description: "Great cushioning, support, and overall foot comfort, can wear all day"
+        description: "Comments expressing strong comfort, softness, support, cushioning, ease of wear, or positive wearing experience"
       - label: "average comfort"
-        description: "Acceptable comfort, nothing special or noteworthy"
+        description: "Comments saying comfort is okay, decent, fine, not bad, acceptable, or mixed but wearable"
       - label: "uncomfortable"
-        description: "Causes pain, blisters, soreness, or foot fatigue"
+        description: "Comments mentioning pain, stiffness, rubbing, blisters, soreness, pressure, fatigue, or poor support"
 
-  # ── Style & Appearance ───────────────────────────────────────────────────────
   - name: style
     enabled: true
     values:
       - label: "looks great"
-        description: "Attractive colorway, clean design, gets compliments, stylish"
+        description: "Comments praising the design, colorway, look, appearance, shape, style, finish, or visual appeal, including short praise like 'clean', 'fire', or 'nice colorway'"
       - label: "looks different from photos"
-        description: "Appearance or colorway differs from product images or expectations"
+        description: "Comments saying the actual product looks different from the website, pictures, listing, or expectation in color, material, or overall appearance"
       - label: "looks cheap"
-        description: "Low-quality finish, cheap materials visible, poor aesthetic"
+        description: "Comments saying the product looks low quality, fake, flimsy, sloppy, plain, or poorly finished"
 
-  # ── Durability ───────────────────────────────────────────────────────────────
   - name: durability
     enabled: true
     values:
       - label: "lasts well"
-        description: "The shoe holds up well over time, durable construction and materials"
+        description: "Comments saying the shoe holds up well, stays in good condition, remains solid after use, or seems durable"
       - label: "wears out fast"
-        description: "Sole, stitching, or upper material deteriorates quickly"
+        description: "Comments saying the shoe wears quickly, creases badly, separates, cracks, peels, frays, or deteriorates sooner than expected"
       - label: "too early to tell"
-        description: "Shoe is new, not enough time to judge longevity"
+        description: "Comments saying it is too soon to judge, they just got it, have not worn it enough, or cannot comment on durability yet"
 
-  # ── Price & Value ────────────────────────────────────────────────────────────
   - name: price_value
     enabled: true
     values:
       - label: "too expensive"
-        description: "Shoe is overpriced or not worth the retail cost"
+        description: "Comments saying the shoe is overpriced, costly, expensive for what it is, or not worth the money"
       - label: "good value"
-        description: "Reasonable price for the quality and style received"
+        description: "Comments saying the shoe is reasonably priced, fair for the quality, decent for the money, or okay value"
       - label: "worth it"
-        description: "Excellent value, quality justifies the price paid"
+        description: "Comments strongly endorsing the value, saying the product justifies the price, is worth every penny, or is a satisfying purchase despite cost"
 
-  # ── Intent ───────────────────────────────────────────────────────────────────
   - name: intent
     enabled: true
     values:
       - label: "needs reply"
-        description: "Comment contains a direct question awaiting an answer"
+        description: "Questions, requests for help, requests for sizing advice, delivery questions, product clarification, or comments clearly expecting an answer"
       - label: "positive review"
-        description: "Compliment, recommendation, or positive experience shared"
+        description: "Praise, approval, recommendation, satisfaction, compliments, or generally favorable product feedback"
       - label: "negative review"
-        description: "Complaint, warning to others, or negative experience shared"
+        description: "Complaints, dissatisfaction, criticism, warnings, refund-like frustration, or generally unfavorable product feedback"
       - label: "comparison"
-        description: "Comment compares this shoe to another Nike model or brand"
+        description: "Comments comparing this product to another shoe, model, version, brand, prior release, or alternative"
       - label: "monitor"
-        description: "Discussion or general conversation worth watching"
+        description: "Short, vague, mixed, mild, tentative, observational, or early-stage comments that are not clearly strong positive, strong negative, or direct questions"
       - label: "spam"
-        description: "Off-topic, promotional, or unrelated comment"
+        description: "Promotional messages, self-advertising, resale posts, unrelated links, repeated marketing, or clearly off-topic comments"
 
-  # ── Tone ─────────────────────────────────────────────────────────────────────
   - name: tone
     enabled: true
     values:
       - label: "happy"
-        description: "Enthusiastic, delighted, or clearly satisfied"
+        description: "Excited, pleased, enthusiastic, satisfied, impressed, celebratory, or approving emotional tone"
       - label: "curious"
-        description: "Asking questions, wondering, or expressing uncertainty"
+        description: "Wondering, unsure, asking, exploratory, or interested emotional tone"
       - label: "disappointed"
-        description: "Let down, expected better, or quietly dissatisfied"
+        description: "Let down, underwhelmed, mildly upset, regretful, or unsatisfied emotional tone"
       - label: "angry"
-        description: "Frustrated, upset, or strongly negative in tone"
+        description: "Strongly frustrated, mad, hostile, outraged, or aggressive emotional tone"
       - label: "neutral"
-        description: "Factual, informational, or no strong emotional tone"
+        description: "Plain, factual, brief, low-emotion, matter-of-fact, or ambiguous tone, including comments like 'not bad', 'okay', 'fine', or very short reactions without strong emotion"
