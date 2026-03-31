@@ -1,0 +1,96 @@
+# Local Tailor — Women's Clothing Shop Dimension Configuration
+# =============================================================
+# Defines WHAT dimensions exist and WHAT each value means.
+# Training examples live separately in shops/womens_clothing/examples.json
+#
+# To add a dimension: add a block here, then add examples to examples.json
+# To retrain: edit examples then run: python run_pipeline.py retrain
+
+dimensions:
+
+  # ── Sizing Accuracy ──────────────────────────────────────────────────────────
+  - name: sizing
+    enabled: true
+    values:
+      - label: "runs small"
+        description: "The item fits smaller than expected, reviewer had to size up"
+      - label: "true to size"
+        description: "The item fits as expected for the stated size"
+      - label: "runs large"
+        description: "The item fits larger than expected, reviewer could have sized down"
+
+  # ── Material & Build Quality ─────────────────────────────────────────────────
+  - name: material
+    enabled: true
+    values:
+      - label: "great quality"
+        description: "Fabric feels premium, well-made, durable construction, holds up well"
+      - label: "poor quality"
+        description: "Fabric feels cheap, thin, itchy, or poorly constructed"
+      - label: "too early to tell"
+        description: "Item is new, not enough use to judge quality or durability"
+
+  # ── Style & Appearance ───────────────────────────────────────────────────────
+  - name: style
+    enabled: true
+    values:
+      - label: "flattering"
+        description: "Item looks great on the body, compliments received, enhances appearance"
+      - label: "unflattering"
+        description: "Item does not suit the reviewer's body type or shape"
+      - label: "looks different from photos"
+        description: "Item appearance differs from product images or description"
+
+  # ── Comfort ──────────────────────────────────────────────────────────────────
+  - name: comfort
+    enabled: true
+    values:
+      - label: "very comfortable"
+        description: "Soft, pleasant to wear all day, no irritation or restriction"
+      - label: "average comfort"
+        description: "Acceptable comfort, nothing exceptional or problematic"
+      - label: "uncomfortable"
+        description: "Causes irritation, feels stiff, restricts movement, or unpleasant to wear"
+
+  # ── Price & Value ────────────────────────────────────────────────────────────
+  - name: price_value
+    enabled: true
+    values:
+      - label: "too expensive"
+        description: "Item is overpriced or not worth the cost given quality"
+      - label: "good value"
+        description: "Reasonable price for the quality and style received"
+      - label: "worth it"
+        description: "Excellent value, high quality justifies the price paid"
+
+  # ── Intent ───────────────────────────────────────────────────────────────────
+  - name: intent
+    enabled: true
+    values:
+      - label: "needs reply"
+        description: "Comment contains a direct question awaiting an answer"
+      - label: "positive review"
+        description: "Compliment, recommendation, or positive experience shared"
+      - label: "negative review"
+        description: "Complaint, warning to others, or negative experience shared"
+      - label: "comparison"
+        description: "Comment compares this item to another brand or product"
+      - label: "monitor"
+        description: "Discussion or general conversation worth watching"
+      - label: "spam"
+        description: "Off-topic, promotional, or unrelated comment"
+
+  # ── Tone ─────────────────────────────────────────────────────────────────────
+  - name: tone
+    enabled: true
+    values:
+      - label: "happy"
+        description: "Enthusiastic, delighted, or clearly satisfied"
+      - label: "curious"
+        description: "Asking questions, wondering, or expressing uncertainty"
+      - label: "disappointed"
+        description: "Let down, expected better, or quietly dissatisfied"
+      - label: "angry"
+        description: "Frustrated, upset, or strongly negative in tone"
+      - label: "neutral"
+        description: "Factual, informational, or no strong emotional tone"

@@ -25,8 +25,9 @@ import yaml
 
 class Shop(str, Enum):
     """Built-in shops. Add new entries here after creating shops/{name}/."""
-    PILLOW = "pillow"
-    SHOE   = "shoe"
+    PILLOW          = "pillow"
+    SHOE            = "shoe"
+    WOMENS_CLOTHING = "womens_clothing"
 
     def __format__(self, format_spec):
         return str.__format__(self.value, format_spec)
@@ -34,7 +35,7 @@ class Shop(str, Enum):
 # ── Active shop ──────────────────────────────────────────────────────────────
 # Change this to switch shops. All paths resolve from this.
 
-SHOP = Shop.SHOE
+SHOP = Shop.WOMENS_CLOTHING
 
 # ── Shop path resolver ───────────────────────────────────────────────────────
 
