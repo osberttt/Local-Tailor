@@ -21,6 +21,7 @@ Files:
 """
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -70,6 +71,15 @@ def _model_cached(model_name: str) -> bool:
         return isinstance(result, str)
     except Exception:
         return False
+
+
+def cleanup_models(models_dir: str):
+    """Delete all trained models for the active shop."""
+    p = Path(models_dir)
+    if p.exists():
+        shutil.rmtree(p)
+        print(f"  Cleaned: {p}")
+    p.mkdir(parents=True, exist_ok=True)
 
 
 def download_models():
@@ -151,11 +161,14 @@ def main():
         print(f"      Comments → {comments_path}")
         print(f"      Ground truth → {gt_path}\n")
 
-        print("[ 4 ] Training SetFit models...")
+        print("[ 4 ] Cleaning up old models...")
+        cleanup_models(paths["models_dir"])
+
+        print("[ 5 ] Training SetFit models...")
         from localtailor.setfit_trainer import train_all_dimensions
         classifiers = train_all_dimensions(dimensions, force=True)
 
-        print("[ 5 ] Running classification pipeline...")
+        print("[ 6 ] Running classification pipeline...")
         from localtailor.pipeline import run_pipeline
         predictions_path = run_pipeline(
             comments_path=comments_path,
@@ -165,7 +178,7 @@ def main():
             output_dir=paths["data_dir"],
         )
 
-        print("[ 6 ] Evaluating against ground truth...")
+        print("[ 7 ] Evaluating against ground truth...")
         from localtailor.evaluator import evaluate
         evaluate(predictions_path, gt_path, post_id="demo",
                  output_dir=paths["data_dir"])
@@ -187,7 +200,10 @@ def main():
 
     # ── Train or load models ─────────────────────────────────────────────────
     if mode == "retrain":
-        print("[ 2 ] Training SetFit models...")
+        print("[ 2 ] Cleaning up old models...")
+        cleanup_models(paths["models_dir"])
+
+        print("[ 3 ] Training SetFit models...")
         from localtailor.setfit_trainer import train_all_dimensions
         classifiers = train_all_dimensions(dimensions, force=True)
     else:
@@ -209,8 +225,10 @@ def main():
         print("  Fetch comments from Facebook or run 'setup' for synthetic data.\n")
         sys.exit(1)
 
-    # ── Run classification pipeline ──────────────────────────────────────────
-    print("[ 3 ] Running classification pipeline...")
+    # retrain uses step 4 onward; predict uses step 3 onward
+    step = 4 if mode == "retrain" else 3
+
+    print(f"[ {step} ] Running classification pipeline...")
     from localtailor.pipeline import run_pipeline
     predictions_path = run_pipeline(
         comments_path=comments_path,
@@ -220,9 +238,8 @@ def main():
         output_dir=data_dir,
     )
 
-    # ── Evaluate (only if ground truth exists) ───────────────────────────────
     if gt_path.exists():
-        print("[ 4 ] Evaluating against ground truth...")
+        print(f"[ {step + 1} ] Evaluating against ground truth...")
         from localtailor.evaluator import evaluate
         evaluate(predictions_path, gt_path, post_id="demo",
                  output_dir=data_dir)

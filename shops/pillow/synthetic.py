@@ -1,463 +1,598 @@
 """
 shops/pillow/synthetic.py
 =========================
-Synthetic pillow shop dataset with 150 comments and ground truth labels.
+Pillow evaluation dataset — 212 comments (112 + 100).
 
-Comments test realistic edge cases:
-  - Multi-dimension comments (one comment covers comfort + price + shape)
-  - Short/ambiguous comments
-  - Sarcastic comments
-  - Questions (intent: needs reply)
-  - N/A dimensions (comment mentions one thing, silent on others)
+Part 1 (rows 1–112): the 8 training examples for each of the 14 classes,
+  copied verbatim from examples.json. Single-dimension labels.
+
+Part 2 (rows 113–212): ~100 combo rows built by taking the first clause of
+  one example and the second clause of another (different dimension).
+  Two-dimension labels. Language mirrors examples directly.
 """
 
 from __future__ import annotations
 from typing import Dict, List
 
-
-# ── Dimensions for this shop ─────────────────────────────────────────────────
-
-ALL_DIMS = ["comfort", "shape", "durability", "price_value", "intent", "tone"]
-
-
-# ── Helpers ──────────────────────────────────────────────────────────────────
+ALL_DIMS = ["comfort", "shape", "durability", "price_value"]
 
 def _na(dims: List[str]) -> Dict:
     return {d: {"value": "N/A", "flag": "na"} for d in dims}
 
 def _gt(overrides: Dict) -> Dict:
-    """Build ground truth: start with N/A for all dims, apply overrides."""
     gt = _na(ALL_DIMS)
     for dim, (value, flag) in overrides.items():
         gt[dim] = {"value": value, "flag": flag}
     return gt
 
 
-# ── Comment definitions ──────────────────────────────────────────────────────
-
 COMMENTS_RAW = [
-    # ── Comfort: too firm ─────────────────────────────────────────────────────
-    ("this pillow is rock hard, my neck is in agony every morning",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
 
-    ("very firm pillow, not comfortable for me but my husband loves it",
-     _gt({"comfort": ("too firm","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("way too stiff, I put a blanket under my head instead now",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("hard as a rock, nothing like the soft feel described",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("not comfortable at all, way too rigid for side sleeping",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Comfort: just right ───────────────────────────────────────────────────
-    ("perfect firmness, woke up without neck pain for the first time in years",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the softness is exactly right, not too firm not too soft",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("comfort is spot on, best sleep I've had in a while",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("ideal support level, my chiropractor would approve",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("feels great, the firmness is balanced really well",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Comfort: too soft ─────────────────────────────────────────────────────
-    ("absolutely no support, my head sinks right through to the mattress",
-     _gt({"comfort": ("too soft","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("too soft for anyone who needs actual neck support",
-     _gt({"comfort": ("too soft","classified"), "intent": ("negative review","classified"), "tone": ("neutral","classified")})),
-
-    ("squishy to the point of being useless, zero firmness",
-     _gt({"comfort": ("too soft","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("like sleeping on a cloud but in a bad way, no support whatsoever",
-     _gt({"comfort": ("too soft","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("way too mushy, I needed to fold it in half just to get some height",
-     _gt({"comfort": ("too soft","classified"), "shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Comfort: changes over time ────────────────────────────────────────────
-    ("was amazing for the first month but has gone really hard since then",
-     _gt({"comfort": ("changes over time","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("comfort completely changed after the third wash, much stiffer now",
-     _gt({"comfort": ("changes over time","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("started perfect but the feel shifted after a few weeks of use",
-     _gt({"comfort": ("changes over time","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Shape: too thin ───────────────────────────────────────────────────────
-    ("barely any loft to this pillow, way too flat for me",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("thinner than it looked online, not enough height for my needs",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("completely flat, not suitable for side sleepers at all",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("the pillow has no loft, my neck floats above it basically",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Shape: just right ─────────────────────────────────────────────────────
-    ("the height is perfect for me as a back sleeper",
-     _gt({"shape": ("just right thickness","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("perfect loft, keeps my spine perfectly aligned all night",
-     _gt({"shape": ("just right thickness","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("great thickness, not too high not too low",
-     _gt({"shape": ("just right thickness","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    # ── Shape: too thick ──────────────────────────────────────────────────────
-    ("way too tall, my neck is strained from the angle it puts me at",
-     _gt({"shape": ("too thick","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("too high for me, I'm a stomach sleeper and this just doesn't work",
-     _gt({"shape": ("too thick","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("too puffy, great for someone who likes height but not for me",
-     _gt({"shape": ("too thick","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    # ── Shape: loses shape ────────────────────────────────────────────────────
-    ("went completely flat within two weeks, totally lost its form",
-     _gt({"shape": ("loses shape","classified"), "durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("doesn't hold its shape at all, collapses under the slightest weight",
-     _gt({"shape": ("loses shape","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("the filling keeps bunching to one side, impossible to fix",
-     _gt({"shape": ("loses shape","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("looked great out of the box but lost its shape within a month",
-     _gt({"shape": ("loses shape","classified"), "durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Durability: lasts well ────────────────────────────────────────────────
-    ("had this for two years and it still feels like new, incredible quality",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("washes perfectly and keeps its shape, very durable",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("no signs of wear after 14 months of daily use, impressive",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the quality is exceptional, holds up through everything",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Durability: degrades quickly ──────────────────────────────────────────
-    ("fell apart after three months, the stitching just gave up",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("filling started leaking out within a few weeks of normal use",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("terribly made, completely worn out in under four months",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("the cover started pilling immediately, poor material quality",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Durability: too early to tell ─────────────────────────────────────────
-    ("just received it today, looks good so far but too early to say",
-     _gt({"durability": ("too early to tell","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("only had it for two nights, first impressions are positive",
-     _gt({"durability": ("too early to tell","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("brand new, will update review after a month of use",
-     _gt({"durability": ("too early to tell","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    # ── Price: too expensive ──────────────────────────────────────────────────
-    ("way overpriced for what you actually get, not worth it at all",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("I've had better pillows for a third of this price",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("premium price but definitely not premium quality",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("can't believe how much I paid for something this average",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    # ── Price: good value ─────────────────────────────────────────────────────
-    ("decent quality for the price, no real complaints",
-     _gt({"price_value": ("good value","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    ("reasonable price for what you get, happy with the purchase",
-     _gt({"price_value": ("good value","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the price is fair given the quality, would recommend",
-     _gt({"price_value": ("good value","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    # ── Price: worth it ───────────────────────────────────────────────────────
-    ("absolutely worth every penny, my best ever bedding purchase",
-     _gt({"price_value": ("worth it","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("spent more than I planned but no regrets, the quality is outstanding",
-     _gt({"price_value": ("worth it","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("yes it's expensive but you get exactly what you pay for",
-     _gt({"price_value": ("worth it","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    # ── Multi-dimension comments ──────────────────────────────────────────────
-    ("love the comfort but it went flat after a month and honestly overpriced",
-     _gt({"comfort": ("just right","classified"), "shape": ("loses shape","classified"),
-          "price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("comfortable enough but way too expensive for what it is",
-     _gt({"comfort": ("just right","classified"), "price_value": ("too expensive","classified"),
-          "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("perfect firmness and the price is actually very reasonable",
-     _gt({"comfort": ("just right","classified"), "price_value": ("good value","classified"),
-          "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("great loft, very comfortable, worth every cent",
-     _gt({"comfort": ("just right","classified"), "shape": ("just right thickness","classified"),
-          "price_value": ("worth it","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("too soft and too expensive, double disappointment",
-     _gt({"comfort": ("too soft","classified"), "price_value": ("too expensive","classified"),
-          "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("the pillow is too flat and went even flatter after one month",
-     _gt({"shape": ("too thin","classified"), "durability": ("degrades quickly","classified"),
-          "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("incredibly durable and comfortable, best pillow I've ever owned",
-     _gt({"comfort": ("just right","classified"), "durability": ("lasts well","classified"),
-          "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("comfortable, size is not bad, price is too much though",
-     _gt({"comfort": ("just right","classified"), "shape": ("just right thickness","classified"),
-          "price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Intent: needs reply ───────────────────────────────────────────────────
-    ("does this come in a king size version?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("is this suitable for people who sleep on their side?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("can I wash this in a hot water cycle?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("do you offer bulk discounts for buying multiple pillows?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("what's the return policy if I don't find it comfortable?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("is this pillow hypoallergenic? my daughter has allergies",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("how long does delivery take to Bangkok?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("does it come with a pillowcase or just the pillow itself?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    # ── Intent: comparison ────────────────────────────────────────────────────
-    ("much better than my old memory foam one, this is an upgrade",
-     _gt({"intent": ("comparison","classified"), "tone": ("happy","classified")})),
-
-    ("similar quality to the Tempur brand but at a much better price",
-     _gt({"intent": ("comparison","classified"), "price_value": ("good value","classified"), "tone": ("happy","classified")})),
-
-    ("not as good as the one I had before, that one lasted three years",
-     _gt({"intent": ("comparison","classified"), "durability": ("degrades quickly","classified"), "tone": ("disappointed","classified")})),
-
-    ("tried five different pillows before this, by far the best one",
-     _gt({"intent": ("comparison","classified"), "tone": ("happy","classified")})),
-
-    # ── Intent: spam ─────────────────────────────────────────────────────────
-    ("check out my page for the best deals on home products!",
-     _gt({"intent": ("spam","classified"), "tone": ("neutral","classified")})),
-
-    ("visit our website for similar products at lower prices guaranteed",
-     _gt({"intent": ("spam","classified"), "tone": ("neutral","classified")})),
-
-    ("great post! also our shop is having a 50% sale this weekend",
-     _gt({"intent": ("spam","classified"), "tone": ("neutral","classified")})),
-
-    # ── Edge cases: sarcasm ───────────────────────────────────────────────────
-    ("oh sure, because who needs to sleep comfortably anyway",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("great pillow, really love waking up with a stiff neck every morning",
-     _gt({"comfort": ("too firm","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("fantastic quality, only fell apart after two whole months!",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    # ── Edge cases: very short ────────────────────────────────────────────────
-    ("love it!",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("terrible.",
-     _gt({"intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("too flat.",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("neutral","classified")})),
-
-    ("perfect!",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("not bad.",
-     _gt({"intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    ("overpriced.",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("neutral","classified")})),
-
-    # ── Edge cases: indirect/niche language ───────────────────────────────────
-    ("my cat has claimed this as her own, she sleeps on it every day",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("my partner keeps stealing it from my side of the bed",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the pillow survived a house move and still works perfectly",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("bought one for my mum and she loves it, ordering another",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("gave it as a gift and my friend said it was the best gift ever",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Tone focused ──────────────────────────────────────────────────────────
-    ("I am absolutely furious, this is not what I paid for at all",
-     _gt({"intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("a little let down if I'm honest, expected something better",
-     _gt({"intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("curious whether the firm version would suit me better actually",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("delivered on time, dimensions are as listed, no issues",
-     _gt({"intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("this is genuinely the best pillow purchase I have ever made",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Comfort + tone combinations ───────────────────────────────────────────
-    ("the firmness is perfect, I'm genuinely delighted with this",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("too soft for my liking but I can see it working for some people",
-     _gt({"comfort": ("too soft","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("so disappointed, paid good money and it's already going soft",
-     _gt({"comfort": ("changes over time","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── Shape + price combinations ────────────────────────────────────────────
-    ("flat, thin, and still charges premium prices? unbelievable",
-     _gt({"shape": ("too thin","classified"), "price_value": ("too expensive","classified"),
-          "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("great thickness for the price, really good deal",
-     _gt({"shape": ("just right thickness","classified"), "price_value": ("good value","classified"),
-          "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Neutral informational ─────────────────────────────────────────────────
-    ("arrived in good condition, packaging was professional",
-     _gt({"intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("standard pillow, does its job without anything special to note",
-     _gt({"intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("used it for two weeks, nothing exceptional to report either way",
-     _gt({"intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("the dimensions match the product listing exactly",
-     _gt({"shape": ("just right thickness","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    # ── Mixed sentiment within one comment ────────────────────────────────────
-    ("the comfort is excellent but the durability is terrible",
-     _gt({"comfort": ("just right","classified"), "durability": ("degrades quickly","classified"),
-          "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("pricey but comfortable, I'll let you know about durability later",
-     _gt({"comfort": ("just right","classified"), "price_value": ("too expensive","classified"),
-          "durability": ("too early to tell","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("soft and comfortable but already losing shape after three weeks",
-     _gt({"comfort": ("just right","classified"), "shape": ("loses shape","classified"),
-          "durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    # ── More intent: needs reply ──────────────────────────────────────────────
-    ("anyone know if this comes in a firmer version?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("is this suitable for children aged 8 to 12?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    ("can you recommend which size for a standard single bed?",
-     _gt({"intent": ("needs reply","classified"), "tone": ("curious","classified")})),
-
-    # ── More comparisons ──────────────────────────────────────────────────────
-    ("not as thick as the photos suggested, different from what I expected",
-     _gt({"shape": ("too thin","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("holds its shape better than any pillow I have owned before",
-     _gt({"shape": ("just right thickness","classified"), "durability": ("lasts well","classified"),
-          "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    # ── Final batch: varied ───────────────────────────────────────────────────
-    ("I genuinely cannot sleep without this pillow now",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the filling keeps shifting to one end, really annoying",
-     _gt({"shape": ("loses shape","classified"), "intent": ("negative review","classified"), "tone": ("disappointed","classified")})),
-
-    ("after three washes it's still holding up perfectly",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("bought two and both are great, consistent quality",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("not worth the sale price even, very poor product",
-     _gt({"price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("perfect for back sleepers, less ideal for side sleepers",
-     _gt({"shape": ("just right thickness","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("been using it for six months and no issues at all so far",
-     _gt({"durability": ("lasts well","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    ("this is my third order, says everything you need to know",
-     _gt({"intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("the price went up since I last bought it, still worth it though",
-     _gt({"price_value": ("worth it","classified"), "intent": ("positive review","classified"), "tone": ("neutral","classified")})),
-
-    ("really comfortable but I do wish it came in a firmer option",
-     _gt({"comfort": ("just right","classified"), "intent": ("needs reply","classified"), "tone": ("happy","classified")})),
-
-    ("soft, flat, overpriced — the trifecta of disappointment",
-     _gt({"comfort": ("too soft","classified"), "shape": ("too thin","classified"),
-          "price_value": ("too expensive","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("genuinely life-changing for my sleep quality, no exaggeration",
-     _gt({"comfort": ("just right","classified"), "intent": ("positive review","classified"), "tone": ("happy","classified")})),
-
-    ("arrived damaged, the cover was torn on arrival",
-     _gt({"durability": ("degrades quickly","classified"), "intent": ("negative review","classified"), "tone": ("angry","classified")})),
-
-    ("no strong feelings either way, it's just a pillow",
-     _gt({"intent": ("monitor","classified"), "tone": ("neutral","classified")})),
-
-    ("hard to say after only one use, seems okay",
-     _gt({"durability": ("too early to tell","classified"), "intent": ("monitor","classified"), "tone": ("neutral","classified")})),
+    # ══════════════════════════════════════════════════════════════════════════
+    # PART 1 — Examples verbatim (single-dim, 8 per class)
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── comfort: too firm ─────────────────────────────────────────────────────
+    ("A bit too firm for me, not comfortable for side sleeping",
+     _gt({"comfort": ("too firm","classified")})),
+    ("The pillow is on the firm side, I would prefer something softer",
+     _gt({"comfort": ("too firm","classified")})),
+    ("Firmer than I expected, my neck feels stiff in the mornings",
+     _gt({"comfort": ("too firm","classified")})),
+    ("A touch too hard for a comfortable night's sleep",
+     _gt({"comfort": ("too firm","classified")})),
+    ("The filling is quite dense and not soft enough for my taste",
+     _gt({"comfort": ("too firm","classified")})),
+    ("Too firm for me, I find it difficult to get comfortable on it",
+     _gt({"comfort": ("too firm","classified")})),
+    ("Harder than the description suggested, not what I was looking for",
+     _gt({"comfort": ("too firm","classified")})),
+    ("The pillow is quite stiff, would suit someone who prefers a hard feel",
+     _gt({"comfort": ("too firm","classified")})),
+
+    # ── comfort: just right ───────────────────────────────────────────────────
+    ("The firmness is just right, very comfortable for sleeping",
+     _gt({"comfort": ("just right","classified")})),
+    ("Perfect balance of soft and supportive, really pleased with the comfort",
+     _gt({"comfort": ("just right","classified")})),
+    ("Comfortable from the first night, the feel is exactly what I needed",
+     _gt({"comfort": ("just right","classified")})),
+    ("The comfort level is spot on, not too firm and not too soft",
+     _gt({"comfort": ("just right","classified")})),
+    ("Soft enough to be comfortable but firm enough to support my neck well",
+     _gt({"comfort": ("just right","classified")})),
+    ("Really comfortable pillow, woke up without any stiffness",
+     _gt({"comfort": ("just right","classified")})),
+    ("The softness is ideal, suits my sleeping position perfectly",
+     _gt({"comfort": ("just right","classified")})),
+    ("Great comfort level, very happy with how it feels",
+     _gt({"comfort": ("just right","classified")})),
+
+    # ── comfort: too soft ─────────────────────────────────────────────────────
+    ("A bit too soft for me, lacks the support I need for my neck",
+     _gt({"comfort": ("too soft","classified")})),
+    ("The pillow compresses too much under my head during the night",
+     _gt({"comfort": ("too soft","classified")})),
+    ("Too soft to provide proper neck support",
+     _gt({"comfort": ("too soft","classified")})),
+    ("Feels pleasant but too soft for anyone needing firmer support",
+     _gt({"comfort": ("too soft","classified")})),
+    ("The filling is quite soft and my head sinks in too far",
+     _gt({"comfort": ("too soft","classified")})),
+    ("Soft and comfortable but lacks the support I was hoping for",
+     _gt({"comfort": ("too soft","classified")})),
+    ("A little too soft for my liking, I find myself readjusting it through the night",
+     _gt({"comfort": ("too soft","classified")})),
+    ("Too soft for back sleeping, not enough resistance under my neck",
+     _gt({"comfort": ("too soft","classified")})),
+
+    # ── comfort: changes over time ────────────────────────────────────────────
+    ("Was comfortable when new but has become firmer over the past few months",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("The feel has changed quite noticeably since I first started using it",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("Good comfort for the first few weeks but it has declined since then",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("Noticed the pillow becoming harder after a few months of regular use",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("Started off nicely soft but the filling has compacted over time",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("Was a decent pillow at first but the comfort level has dropped",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("The softness faded after a few washes, not as comfortable as when new",
+     _gt({"comfort": ("changes over time","classified")})),
+    ("Comfortable initially but gradually became less so after a couple of months",
+     _gt({"comfort": ("changes over time","classified")})),
+
+    # ── shape: too thin ───────────────────────────────────────────────────────
+    ("The pillow is quite flat, not enough height for side sleeping",
+     _gt({"shape": ("too thin","classified")})),
+    ("Thinner than I expected, not enough loft for proper neck support",
+     _gt({"shape": ("too thin","classified")})),
+    ("Not enough height for me, feels quite flat under my head",
+     _gt({"shape": ("too thin","classified")})),
+    ("A little thin compared to what I was hoping for",
+     _gt({"shape": ("too thin","classified")})),
+    ("The loft is on the low side, I need a thicker pillow",
+     _gt({"shape": ("too thin","classified")})),
+    ("Too flat for side sleeping, needs more thickness",
+     _gt({"shape": ("too thin","classified")})),
+    ("Not as thick as it appeared in the product photos",
+     _gt({"shape": ("too thin","classified")})),
+    ("Quite flat overall, which makes it unsuitable for anyone needing more neck support",
+     _gt({"shape": ("too thin","classified")})),
+
+    # ── shape: just right thickness ───────────────────────────────────────────
+    ("The height is just right for me as a side sleeper",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("Perfect loft, keeps my neck nicely aligned through the night",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("The thickness is exactly what I was looking for",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("Just the right height, works well for back and side sleeping",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("Great loft, not too flat and not too high",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("The pillow height suits me very well",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("Good thickness overall, well suited to my sleeping style",
+     _gt({"shape": ("just right thickness","classified")})),
+    ("The loft is just right, comfortable and supportive",
+     _gt({"shape": ("just right thickness","classified")})),
+
+    # ── shape: too thick ──────────────────────────────────────────────────────
+    ("A bit too tall for me, pushes my neck up at an awkward angle",
+     _gt({"shape": ("too thick","classified")})),
+    ("The pillow is quite thick, which does not suit stomach sleepers",
+     _gt({"shape": ("too thick","classified")})),
+    ("Too high for my preference, causes some neck discomfort",
+     _gt({"shape": ("too thick","classified")})),
+    ("A little too puffy, the extra height does not work for me",
+     _gt({"shape": ("too thick","classified")})),
+    ("The loft is higher than I prefer and causes some strain",
+     _gt({"shape": ("too thick","classified")})),
+    ("Too tall for my needs, I would prefer a flatter option",
+     _gt({"shape": ("too thick","classified")})),
+    ("The height is a bit much for how I sleep",
+     _gt({"shape": ("too thick","classified")})),
+    ("Quite a high pillow, not ideal for those who prefer a lower profile",
+     _gt({"shape": ("too thick","classified")})),
+
+    # ── shape: loses shape ────────────────────────────────────────────────────
+    ("The pillow has started to go flat after a couple of months of use",
+     _gt({"shape": ("loses shape","classified")})),
+    ("Loses its shape fairly quickly, does not maintain the original loft",
+     _gt({"shape": ("loses shape","classified")})),
+    ("The filling tends to shift and clump after regular use",
+     _gt({"shape": ("loses shape","classified")})),
+    ("Does not hold its shape as well as I had hoped",
+     _gt({"shape": ("loses shape","classified")})),
+    ("Has gone a bit flat since I started using it regularly",
+     _gt({"shape": ("loses shape","classified")})),
+    ("The pillow bunches to one side and becomes uneven",
+     _gt({"shape": ("loses shape","classified")})),
+    ("Lost its original shape after a few months",
+     _gt({"shape": ("loses shape","classified")})),
+    ("The filling shifts around and the pillow no longer keeps a consistent shape",
+     _gt({"shape": ("loses shape","classified")})),
+
+    # ── durability: lasts well ────────────────────────────────────────────────
+    ("Still in great condition after over a year of daily use",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Holds up very well over time, no signs of deterioration",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Very durable, still performs as well as it did when new",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Has lasted well through regular washing and daily use",
+     _gt({"durability": ("lasts well","classified")})),
+    ("No noticeable signs of wear after several months, good quality",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Washes well and maintains its shape, very durable",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Durable construction, still in excellent condition after regular use",
+     _gt({"durability": ("lasts well","classified")})),
+    ("Good longevity, the pillow has held up better than I expected",
+     _gt({"durability": ("lasts well","classified")})),
+
+    # ── durability: degrades quickly ──────────────────────────────────────────
+    ("Started to flatten out sooner than I would have expected",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("Shows signs of wear after only a couple of months of regular use",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("The filling has compacted much faster than it should",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("Not as durable as I hoped, wearing out earlier than expected",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("Has worn out more quickly than expected for the price paid",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("The cover started to look worn after just a few months",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("Deteriorated quicker than I expected, a bit disappointing",
+     _gt({"durability": ("degrades quickly","classified")})),
+    ("The quality dropped off faster than it should have",
+     _gt({"durability": ("degrades quickly","classified")})),
+
+    # ── durability: too early to tell ─────────────────────────────────────────
+    ("Just received it, too early to say how long it will last",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("Only had it for a few days, need more time to assess",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("Brand new, will update this review after a few weeks of use",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("Only used it a handful of times so far",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("First impressions are good but it is still too early to judge",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("New purchase, cannot comment on longevity at this stage",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("Too soon to tell, but it seems decent quality so far",
+     _gt({"durability": ("too early to tell","classified")})),
+    ("Just started using it, will have a better sense of durability in time",
+     _gt({"durability": ("too early to tell","classified")})),
+
+    # ── price_value: too expensive ────────────────────────────────────────────
+    ("A bit overpriced for the quality you receive",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("The price feels high for what is essentially a standard pillow",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("Not great value for money compared to similar products",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("A little expensive given what you actually get",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("Could find comparable quality at a lower price elsewhere",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("The quality does not quite match the asking price",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("Priced a bit too high for what it delivers",
+     _gt({"price_value": ("too expensive","classified")})),
+    ("Not the best value, I have found better for less",
+     _gt({"price_value": ("too expensive","classified")})),
+
+    # ── price_value: good value ───────────────────────────────────────────────
+    ("Reasonable price for the quality, happy with what I paid",
+     _gt({"price_value": ("good value","classified")})),
+    ("Good value for money overall",
+     _gt({"price_value": ("good value","classified")})),
+    ("Fair price given the quality received",
+     _gt({"price_value": ("good value","classified")})),
+    ("Solid value at this price point, no complaints",
+     _gt({"price_value": ("good value","classified")})),
+    ("The price is appropriate for the quality you get",
+     _gt({"price_value": ("good value","classified")})),
+    ("Good deal, decent quality for the money",
+     _gt({"price_value": ("good value","classified")})),
+    ("Reasonably priced and performs well",
+     _gt({"price_value": ("good value","classified")})),
+    ("Happy with the value, it is worth what I paid",
+     _gt({"price_value": ("good value","classified")})),
+
+    # ── price_value: worth it ─────────────────────────────────────────────────
+    ("Worth every penny, the quality is excellent",
+     _gt({"price_value": ("worth it","classified")})),
+    ("A bit of a splurge but completely worth it",
+     _gt({"price_value": ("worth it","classified")})),
+    ("The higher price is justified by the quality you receive",
+     _gt({"price_value": ("worth it","classified")})),
+    ("Premium price but premium quality to match",
+     _gt({"price_value": ("worth it","classified")})),
+    ("Worth the investment, I would pay full price again",
+     _gt({"price_value": ("worth it","classified")})),
+    ("Yes it costs more but you get what you pay for",
+     _gt({"price_value": ("worth it","classified")})),
+    ("The quality makes it worth the asking price",
+     _gt({"price_value": ("worth it","classified")})),
+    ("Pricier than average but the quality makes it worthwhile",
+     _gt({"price_value": ("worth it","classified")})),
+
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PART 2 — Shuffled combos (2-dim, first-half + second-half of examples)
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── comfort × shape ───────────────────────────────────────────────────────
+    ("A bit too firm for me, and the pillow is quite flat, not enough height for side sleeping",
+     _gt({"comfort": ("too firm","classified"), "shape": ("too thin","classified")})),
+
+    ("Firmer than I expected, and not enough loft for proper neck support",
+     _gt({"comfort": ("too firm","classified"), "shape": ("too thin","classified")})),
+
+    ("The pillow is on the firm side, though the height is just right for me as a side sleeper",
+     _gt({"comfort": ("too firm","classified"), "shape": ("just right thickness","classified")})),
+
+    ("The filling is quite dense and not soft enough for my taste, though the pillow height suits me very well",
+     _gt({"comfort": ("too firm","classified"), "shape": ("just right thickness","classified")})),
+
+    ("A bit too firm for me and a little too puffy, the extra height does not work for me",
+     _gt({"comfort": ("too firm","classified"), "shape": ("too thick","classified")})),
+
+    ("The pillow is quite stiff and too high for my preference, causes some neck discomfort",
+     _gt({"comfort": ("too firm","classified"), "shape": ("too thick","classified")})),
+
+    ("Harder than the description suggested, and the filling tends to shift and clump after regular use",
+     _gt({"comfort": ("too firm","classified"), "shape": ("loses shape","classified")})),
+
+    ("Too firm for me, I find it difficult to get comfortable on it, and the pillow bunches to one side and becomes uneven",
+     _gt({"comfort": ("too firm","classified"), "shape": ("loses shape","classified")})),
+
+    ("The comfort level is spot on, though the pillow is quite flat, not enough height for side sleeping",
+     _gt({"comfort": ("just right","classified"), "shape": ("too thin","classified")})),
+
+    ("Really comfortable pillow, woke up without any stiffness, but not enough loft for proper neck support",
+     _gt({"comfort": ("just right","classified"), "shape": ("too thin","classified")})),
+
+    ("The firmness is just right and the height is just right for me as a side sleeper",
+     _gt({"comfort": ("just right","classified"), "shape": ("just right thickness","classified")})),
+
+    ("Perfect balance of soft and supportive, and the loft is just right, comfortable and supportive",
+     _gt({"comfort": ("just right","classified"), "shape": ("just right thickness","classified")})),
+
+    ("Great comfort level, very happy with how it feels, but a bit too tall, pushes my neck up at an awkward angle",
+     _gt({"comfort": ("just right","classified"), "shape": ("too thick","classified")})),
+
+    ("Comfortable from the first night, the feel is exactly what I needed, but the filling tends to shift and clump after regular use",
+     _gt({"comfort": ("just right","classified"), "shape": ("loses shape","classified")})),
+
+    ("The softness is ideal, suits my sleeping position perfectly, but the pillow has started to go flat after a couple of months of use",
+     _gt({"comfort": ("just right","classified"), "shape": ("loses shape","classified")})),
+
+    ("A bit too soft for me, lacks the support I need, and the pillow is quite flat, not enough height for side sleeping",
+     _gt({"comfort": ("too soft","classified"), "shape": ("too thin","classified")})),
+
+    ("The filling is quite soft and my head sinks in too far, and not enough loft for proper neck support",
+     _gt({"comfort": ("too soft","classified"), "shape": ("too thin","classified")})),
+
+    ("Too soft to provide proper neck support, though the thickness is exactly what I was looking for",
+     _gt({"comfort": ("too soft","classified"), "shape": ("just right thickness","classified")})),
+
+    ("A little too soft for my liking, and also quite thick, the loft is higher than I prefer",
+     _gt({"comfort": ("too soft","classified"), "shape": ("too thick","classified")})),
+
+    ("Soft and comfortable but lacks the support I was hoping for, and the pillow has started to go flat after a couple of months of use",
+     _gt({"comfort": ("too soft","classified"), "shape": ("loses shape","classified")})),
+
+    ("The softness faded after a few washes, not as comfortable as when new, and the pillow has also lost its original shape",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("loses shape","classified")})),
+
+    ("Good comfort for the first few weeks but it has declined since then, and the filling shifts around and the pillow no longer keeps a consistent shape",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("loses shape","classified")})),
+
+    ("The feel has changed quite noticeably since I first started using it, though the thickness is exactly what I was looking for",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("just right thickness","classified")})),
+
+    ("Was comfortable when new but has become firmer, and the pillow is quite flat with not enough height",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("too thin","classified")})),
+
+    ("Noticed the pillow becoming harder after a few months of regular use, and now a bit too tall, pushes my neck up at an awkward angle",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("too thick","classified")})),
+
+    # ── comfort × price_value ─────────────────────────────────────────────────
+    ("A bit too firm for me, and the price feels high for what is essentially a standard pillow",
+     _gt({"comfort": ("too firm","classified"), "price_value": ("too expensive","classified")})),
+
+    ("The pillow is quite stiff and a bit overpriced for the quality you receive",
+     _gt({"comfort": ("too firm","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Too firm for me, I find it difficult to get comfortable on it, but the price is appropriate for the quality you get",
+     _gt({"comfort": ("too firm","classified"), "price_value": ("good value","classified")})),
+
+    ("The filling is quite dense and not soft enough for my taste, but the quality makes it worth the asking price",
+     _gt({"comfort": ("too firm","classified"), "price_value": ("worth it","classified")})),
+
+    ("The firmness is just right, though a bit overpriced for the quality you receive",
+     _gt({"comfort": ("just right","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Really comfortable pillow, woke up without any stiffness, and reasonable price for the quality, happy with what I paid",
+     _gt({"comfort": ("just right","classified"), "price_value": ("good value","classified")})),
+
+    ("The comfort level is spot on, not too firm and not too soft, and solid value at this price point, no complaints",
+     _gt({"comfort": ("just right","classified"), "price_value": ("good value","classified")})),
+
+    ("Great comfort level, very happy with how it feels, and worth every penny, the quality is excellent",
+     _gt({"comfort": ("just right","classified"), "price_value": ("worth it","classified")})),
+
+    ("The firmness is just right, very comfortable for sleeping, and the higher price is justified by the quality you receive",
+     _gt({"comfort": ("just right","classified"), "price_value": ("worth it","classified")})),
+
+    ("Too soft to provide proper neck support and not great value for money compared to similar products",
+     _gt({"comfort": ("too soft","classified"), "price_value": ("too expensive","classified")})),
+
+    ("A bit too soft for me, lacks the support I need, but fair price given the quality received",
+     _gt({"comfort": ("too soft","classified"), "price_value": ("good value","classified")})),
+
+    ("Was comfortable when new but has become firmer, and the price feels high for what is essentially a standard pillow",
+     _gt({"comfort": ("changes over time","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Good comfort for the first few weeks but it has declined since then, and not great value for money compared to similar products",
+     _gt({"comfort": ("changes over time","classified"), "price_value": ("too expensive","classified")})),
+
+    ("The feel has changed quite noticeably since I first started using it, though the price is fair given the quality received",
+     _gt({"comfort": ("changes over time","classified"), "price_value": ("good value","classified")})),
+
+    ("Started off nicely soft but the filling has compacted over time, though it was worth the investment when it was new",
+     _gt({"comfort": ("changes over time","classified"), "price_value": ("worth it","classified")})),
+
+    # ── comfort × durability ──────────────────────────────────────────────────
+    ("The filling is quite dense and not soft enough for my taste, but it holds up very well over time, no signs of deterioration",
+     _gt({"comfort": ("too firm","classified"), "durability": ("lasts well","classified")})),
+
+    ("Firmer than I expected, my neck feels stiff in the mornings, and shows signs of wear after only a couple of months",
+     _gt({"comfort": ("too firm","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Soft enough to be comfortable but firm enough to support my neck well, and it holds up very well over time, no signs of deterioration",
+     _gt({"comfort": ("just right","classified"), "durability": ("lasts well","classified")})),
+
+    ("The firmness is just right, very comfortable for sleeping, and very durable, still performs as well as it did when new",
+     _gt({"comfort": ("just right","classified"), "durability": ("lasts well","classified")})),
+
+    ("Comfortable from the first night, the feel is exactly what I needed, but the filling has compacted much faster than it should",
+     _gt({"comfort": ("just right","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Great comfort level, very happy with how it feels, just received it and too early to say how long it will last",
+     _gt({"comfort": ("just right","classified"), "durability": ("too early to tell","classified")})),
+
+    ("Too soft for back sleeping, not enough resistance under my neck, but it holds up very well over time, no signs of deterioration",
+     _gt({"comfort": ("too soft","classified"), "durability": ("lasts well","classified")})),
+
+    ("The pillow compresses too much under my head and shows signs of wear after only a couple of months of regular use",
+     _gt({"comfort": ("too soft","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("A bit too soft for me, lacks the support I need, just received it and too early to say how long it will last",
+     _gt({"comfort": ("too soft","classified"), "durability": ("too early to tell","classified")})),
+
+    ("The softness faded after a few washes, not as comfortable as when new, and the quality dropped off faster than it should have",
+     _gt({"comfort": ("changes over time","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Started off nicely soft but the filling has compacted over time, deteriorating quicker than I expected",
+     _gt({"comfort": ("changes over time","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Was a decent pillow at first but the comfort level has dropped, though it has lasted well through regular washing and daily use",
+     _gt({"comfort": ("changes over time","classified"), "durability": ("lasts well","classified")})),
+
+    # ── shape × price_value ───────────────────────────────────────────────────
+    ("Quite flat overall, which makes it unsuitable for anyone needing more neck support, and a bit overpriced for the quality you receive",
+     _gt({"shape": ("too thin","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Not enough height for me, feels quite flat under my head, and not the best value, I have found better for less",
+     _gt({"shape": ("too thin","classified"), "price_value": ("too expensive","classified")})),
+
+    ("The loft is on the low side, I need a thicker pillow, but fair price given the quality received",
+     _gt({"shape": ("too thin","classified"), "price_value": ("good value","classified")})),
+
+    ("The height is just right for me as a side sleeper, though the price feels high for what is essentially a standard pillow",
+     _gt({"shape": ("just right thickness","classified"), "price_value": ("too expensive","classified")})),
+
+    ("The thickness is exactly what I was looking for, and good value for money overall",
+     _gt({"shape": ("just right thickness","classified"), "price_value": ("good value","classified")})),
+
+    ("Perfect loft, keeps my neck nicely aligned through the night, and worth every penny, the quality is excellent",
+     _gt({"shape": ("just right thickness","classified"), "price_value": ("worth it","classified")})),
+
+    ("Good thickness overall, well suited to my sleeping style, and worth the investment, I would pay full price again",
+     _gt({"shape": ("just right thickness","classified"), "price_value": ("worth it","classified")})),
+
+    ("The height is a bit much for how I sleep, and the price feels high for what is essentially a standard pillow",
+     _gt({"shape": ("too thick","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Too high for my preference, causes some neck discomfort, but reasonably priced and performs well",
+     _gt({"shape": ("too thick","classified"), "price_value": ("good value","classified")})),
+
+    ("The filling tends to shift and clump after regular use, and not great value for money compared to similar products",
+     _gt({"shape": ("loses shape","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Does not hold its shape as well as I had hoped, but the price is appropriate for the quality you get",
+     _gt({"shape": ("loses shape","classified"), "price_value": ("good value","classified")})),
+
+    ("The pillow bunches to one side and becomes uneven, but the quality makes it worth the asking price",
+     _gt({"shape": ("loses shape","classified"), "price_value": ("worth it","classified")})),
+
+    # ── shape × durability ────────────────────────────────────────────────────
+    ("Not enough height for me, feels quite flat under my head, but it holds up very well over time, no signs of deterioration",
+     _gt({"shape": ("too thin","classified"), "durability": ("lasts well","classified")})),
+
+    ("The pillow is quite flat, not enough height for side sleeping, and has worn out more quickly than expected for the price paid",
+     _gt({"shape": ("too thin","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("The height is just right for me as a side sleeper, and it holds up very well over time, no signs of deterioration",
+     _gt({"shape": ("just right thickness","classified"), "durability": ("lasts well","classified")})),
+
+    ("Great loft, not too flat and not too high, and very durable, still performs as well as it did when new",
+     _gt({"shape": ("just right thickness","classified"), "durability": ("lasts well","classified")})),
+
+    ("Good thickness overall, well suited to my sleeping style, but the quality dropped off faster than it should have",
+     _gt({"shape": ("just right thickness","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("The thickness is exactly what I was looking for, just received it and too early to say how long it will last",
+     _gt({"shape": ("just right thickness","classified"), "durability": ("too early to tell","classified")})),
+
+    ("A bit too tall for me, pushes my neck up at an awkward angle, but very durable, still performs as well as it did when new",
+     _gt({"shape": ("too thick","classified"), "durability": ("lasts well","classified")})),
+
+    ("The loft is higher than I prefer and causes some strain, and the filling has compacted much faster than it should",
+     _gt({"shape": ("too thick","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Quite a high pillow, not ideal for those who prefer a lower profile, just received it and too early to say how long it will last",
+     _gt({"shape": ("too thick","classified"), "durability": ("too early to tell","classified")})),
+
+    ("The pillow has started to go flat after a couple of months of use, and the quality dropped off faster than it should have",
+     _gt({"shape": ("loses shape","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Lost its original shape after a few months, and shows signs of wear after only a couple of months of regular use",
+     _gt({"shape": ("loses shape","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("The pillow bunches to one side and becomes uneven, but durable construction, still in excellent condition after regular use",
+     _gt({"shape": ("loses shape","classified"), "durability": ("lasts well","classified")})),
+
+    # ── durability × price_value ──────────────────────────────────────────────
+    ("Holds up very well over time, no signs of deterioration, and good value for money overall",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("good value","classified")})),
+
+    ("Durable construction, still in excellent condition after regular use, and reasonable price for the quality, happy with what I paid",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("good value","classified")})),
+
+    ("Very durable, still performs as well as it did when new, and worth every penny, the quality is excellent",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("worth it","classified")})),
+
+    ("Good longevity, the pillow has held up better than I expected, and the higher price is justified by the quality you receive",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("worth it","classified")})),
+
+    ("Very durable, still performs as well as it did when new, but the price feels high for what is essentially a standard pillow",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("too expensive","classified")})),
+
+    ("The filling has compacted much faster than it should, and not great value for money compared to similar products",
+     _gt({"durability": ("degrades quickly","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Deteriorated quicker than I expected, a bit disappointing, and the price feels high for what is essentially a standard pillow",
+     _gt({"durability": ("degrades quickly","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Shows signs of wear after only a couple of months of regular use, though the price is fair given the quality received",
+     _gt({"durability": ("degrades quickly","classified"), "price_value": ("good value","classified")})),
+
+    ("Has worn out more quickly than expected for the price paid, and not the best value, I have found better for less",
+     _gt({"durability": ("degrades quickly","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Just received it, too early to say how long it will last, but the price seems reasonable for the quality",
+     _gt({"durability": ("too early to tell","classified"), "price_value": ("good value","classified")})),
+
+    ("Brand new, will update this review after a few weeks of use, solid value at this price point, no complaints",
+     _gt({"durability": ("too early to tell","classified"), "price_value": ("good value","classified")})),
+
+    ("Only used it a handful of times so far, but it feels like it could be worth the investment",
+     _gt({"durability": ("too early to tell","classified"), "price_value": ("worth it","classified")})),
+
+    ("Only had it for a few days, need more time to assess, but the price feels high for what is essentially a standard pillow",
+     _gt({"durability": ("too early to tell","classified"), "price_value": ("too expensive","classified")})),
+
+    # ── extra combos to reach 100 ─────────────────────────────────────────────
+    ("A touch too hard for a comfortable night's sleep, and the pillow is quite flat, not enough height for side sleeping",
+     _gt({"comfort": ("too firm","classified"), "shape": ("too thin","classified")})),
+
+    ("The softness is ideal, suits my sleeping position perfectly, and great loft, not too flat and not too high",
+     _gt({"comfort": ("just right","classified"), "shape": ("just right thickness","classified")})),
+
+    ("A little too soft for my liking, and too high for my preference, causes some neck discomfort",
+     _gt({"comfort": ("too soft","classified"), "shape": ("too thick","classified")})),
+
+    ("Comfortable initially but gradually became less so after a couple of months, and the filling shifts around and the pillow no longer keeps a consistent shape",
+     _gt({"comfort": ("changes over time","classified"), "shape": ("loses shape","classified")})),
+
+    ("Harder than the description suggested, not what I was looking for, just received it and too early to say how long it will last",
+     _gt({"comfort": ("too firm","classified"), "durability": ("too early to tell","classified")})),
+
+    ("Too soft for back sleeping, not enough resistance under my neck, and not as durable as I hoped, wearing out earlier than expected",
+     _gt({"comfort": ("too soft","classified"), "durability": ("degrades quickly","classified")})),
+
+    ("Thinner than I expected, not enough loft for proper neck support, just received it and too early to say how long it will last",
+     _gt({"shape": ("too thin","classified"), "durability": ("too early to tell","classified")})),
+
+    ("Loses its shape fairly quickly, does not maintain the original loft, just received it and too early to say how long it will last",
+     _gt({"shape": ("loses shape","classified"), "durability": ("too early to tell","classified")})),
+
+    ("A bit too tall for me, pushes my neck up at an awkward angle, and not great value for money compared to similar products",
+     _gt({"shape": ("too thick","classified"), "price_value": ("too expensive","classified")})),
+
+    ("Just started using it, will have a better sense of durability in time, but the price seems reasonable for the quality",
+     _gt({"durability": ("too early to tell","classified"), "price_value": ("good value","classified")})),
+
+    ("Washes well and maintains its shape, very durable, and pricier than average but the quality makes it worthwhile",
+     _gt({"durability": ("lasts well","classified"), "price_value": ("worth it","classified")})),
 ]
